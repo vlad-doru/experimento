@@ -12,9 +12,8 @@ type MemoryRepository struct {
 	experiments map[string]interfaces.ExperimentDescription
 }
 
-func (repository *MemoryRepository) CreateExperiment(experiment interfaces.ExperimentDescription) error {
+func (repository *MemoryRepository) CreateExperiment(experiment interfaces.ExperimentDescription) {
 	repository.experiments[experiment.ID] = experiment
-	return nil
 }
 
 func (repository *MemoryRepository) GetExperiment(experiment_id string) (interfaces.ExperimentDescription, error) {
@@ -25,11 +24,11 @@ func (repository *MemoryRepository) GetExperiment(experiment_id string) (interfa
 	return experiment, nil
 }
 
-func (repository *MemoryRepository) DestroyExperiment(experiment_id string) error {
+func (repository *MemoryRepository) DestroyExperiment(experiment_id string) {
 	delete(repository.experiments, experiment_id)
-	return nil
 }
 
+// Implements the Repository interface.
 func (repository *MemoryRepository) GetExperiments() (map[string]interfaces.ExperimentDescription, error) {
 	return repository.experiments, nil
 }

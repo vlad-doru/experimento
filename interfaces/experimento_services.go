@@ -7,11 +7,6 @@ import (
 // Repository describes an interface for storing all the data about
 // experiments, including group partitions and variables assignments.
 type Repository interface {
-	CreateExperiment(ExperimentDescription) error
-	// TODO: See if this is needed.
-	GetExperiment(experiment_id string) (ExperimentDescription, error)
-	DestroyExperiment(experiment_id string) error
-
 	// GetExperiments should return a map describing all the existing experiments.
 	// We recommend storing all the experiments locally, as this function is going to be
 	// called for every query of the experimento system, and subscribing to changes
