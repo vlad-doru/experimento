@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	"github.com/vlad-doru/experimento/interfaces"
+	"github.com/vlad-doru/experimento/experiment"
 
 	"fmt"
 )
@@ -9,26 +9,26 @@ import (
 // MemoryRepository is a local, in-memory experiment repository.
 // It is implemented mainly for testing purposes.
 type MemoryRepository struct {
-	experiments map[string]interfaces.ExperimentDescription
+	experiments map[string]experiment.Description
 }
 
-func (repository *MemoryRepository) CreateExperiment(experiment interfaces.ExperimentDescription) {
+func (repository *MemoryRepository) CreateExperiment(experiment experiment.Description) {
 	repository.experiments[experiment.ID] = experiment
 }
 
-func (repository *MemoryRepository) GetExperiment(experiment_id string) (interfaces.ExperimentDescription, error) {
-	experiment, ok := repository.experiments[experiment_id]
+func (repository *MemoryRepository) GetExperiment(exp_id string) (experiment.Description, error) {
+	exp, ok := repository.experiments[exp_id]
 	if ok == false {
-		return interfaces.ExperimentDescription{}, fmt.Errorf("The experiment with id %s does not exist.", experiment_id)
+		return experiment.Description{}, fmt.Errorf("The experiment with id %s does not exist.", exp_id)
 	}
-	return experiment, nil
+	return exp, nil
 }
 
-func (repository *MemoryRepository) DestroyExperiment(experiment_id string) {
-	delete(repository.experiments, experiment_id)
+func (repository *MemoryRepository) DestroyExperiment(exp_id string) {
+	delete(repository.experiments, exp_id)
 }
 
 // Implements the Repository interface.
-func (repository *MemoryRepository) GetExperiments() (map[string]interfaces.ExperimentDescription, error) {
+func (repository *MemoryRepository) GetExperiments() (map[string]experiment.Description, error) {
 	return repository.experiments, nil
 }

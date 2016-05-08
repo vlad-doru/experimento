@@ -1,6 +1,8 @@
 package interfaces
 
 import (
+	"github.com/vlad-doru/experimento/experiment"
+
 	"fmt"
 )
 
@@ -13,15 +15,15 @@ type Repository interface {
 	// We recommend storing all the experiments locally, as this function is going to be
 	// called for every query of the experimento system, and subscribing to changes
 	// to the repository made by other parties.
-	GetExperiments() (map[string]ExperimentDescription, error)
+	GetExperiments() (map[string]experiment.Description, error)
 }
 
 // Store describes an interface for storing and querying the
 // group of an entity, given an experiment id.
 // We recommend using a high performance, in-memory, key-value database.
 type Store interface {
-	SetExperimentGroup(entity_id, experiment_id, group string) error
-	GetExperimentGroup(entity_id, experiment_id string) (string, error)
+	SetExperimentGroup(entity_id, exp_id, group string) error
+	GetExperimentGroup(entity_id, exp_id string) (string, error)
 }
 
 type NoGroupSet struct {
@@ -36,5 +38,5 @@ func (e NoGroupSet) Error() string {
 // Assigner describes an interface for deciding which group a specific entity
 // will be mapped to.
 type Assigner interface {
-	AssignGroup(entity_id string, desc ExperimentDescription) (string, error)
+	AssignGroup(entity_id string, desc experiment.Description) (string, error)
 }

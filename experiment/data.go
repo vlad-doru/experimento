@@ -1,4 +1,4 @@
-package interfaces
+package experiment
 
 import (
 	"fmt"
@@ -6,16 +6,16 @@ import (
 	"time"
 )
 
-// ExperimentInfo holds general information about the experiment.
-type ExperimentInfo struct {
+// Info holds general information about the experiment.
+type Info struct {
 	ID      string
 	Started time.Time
 	Seed    uint64
 	Size    float64
 }
 
-// ExperimentVariables specifies values for variables.
-type ExperimentVariables map[string]string
+// Variables specifies values for variables.
+type Variables map[string]string
 
 // VariableOptions specifies a list of options a variable can have.
 type VariableOptions []string
@@ -24,12 +24,13 @@ type VariableOptions []string
 type GroupDescription struct {
 	// StartSize tells us what is the size of the group in a typical A/B testing setup.
 	StartSize float64
-	Variables ExperimentVariables
+	Variables Variables
 }
 
-type ExperimentDescription struct {
+// Description holds all the necessary information we need to know about an experiment.
+type Description struct {
 	// Info encapsulates general data about the experiment like ID and start time.
-	ExperimentInfo
+	Info
 	// VariablesInfo represents the map of allowed variables with their possible options.
 	VariablesInfo map[string]VariableOptions
 	// Group maps a group name to its corresponding description.
@@ -44,17 +45,17 @@ type ExperimentDescription struct {
 	AuxiliaryInfo map[string]interface{}
 }
 
-func NewExperimentDescription(
-	info ExperimentInfo,
+func NewDescription(
+	info Info,
 	varsInfo map[string]VariableOptions,
 	groups map[string]GroupDescription,
 	whitelist map[string]string,
-) (ExperimentDescription, error) {
-	desc := ExperimentDescription{
-		ExperimentInfo: info,
-		VariablesInfo:  varsInfo,
-		Groups:         groups,
-		Whitelist:      whitelist}
+) (Description, error) {
+	desc := Description{
+		Info:          info,
+		VariablesInfo: varsInfo,
+		Groups:        groups,
+		Whitelist:     whitelist}
 	// Validate the experiment description.
 	err := desc.Validate()
 	if err != nil {
@@ -71,7 +72,7 @@ func NewExperimentDescription(
 }
 
 // Validate checks if all the fields of an ExperimentInfo struct are correctly set.
-func (info *ExperimentInfo) Validate() error {
+func (info *Info) Validate() error {
 	if info.ID == "" {
 		return fmt.Errorf("Invalid experiment ID: '' (empty string).")
 	}
@@ -85,10 +86,10 @@ func (info *ExperimentInfo) Validate() error {
 }
 
 // Validate checks if all the fields of an ExperimentDescription struct are correctly set.
-func (desc *ExperimentDescription) Validate() error {
+func (desc *Description) Validate() error {
 	// Valdiate the ExperimentInfo
 	var err error
-	err = desc.ExperimentInfo.Validate()
+	err = desc.Info.Validate()
 	if err != nil {
 		return err
 	}
@@ -131,7 +132,7 @@ func (desc *ExperimentDescription) Validate() error {
 	return nil
 }
 
-func (desc *ExperimentDescription) allowedVariableValue(variable, value string) error {
+func (desc *Description) allowedVariableValue(variable, value string) error {
 	allowedValues, ok := desc.VariablesInfo[variable]
 	if ok == false {
 		return fmt.Errorf("Non declared variable name: %s", variable)

@@ -1,7 +1,7 @@
 package assigners
 
 import (
-	"github.com/vlad-doru/experimento/interfaces"
+	"github.com/vlad-doru/experimento/experiment"
 
 	"fmt"
 	"hash/fnv"
@@ -16,7 +16,7 @@ func hash(s string) uint64 {
 
 type ABTesting struct{}
 
-func (assigner *ABTesting) AssignGroup(entity_id string, desc interfaces.ExperimentDescription) (string, error) {
+func (assigner *ABTesting) AssignGroup(entity_id string, desc experiment.Description) (string, error) {
 	// We get the hash based on the entity_id and xor it with the experiment seed.
 	id_seed := hash(entity_id) ^ desc.Seed
 	// We use this id_seed to generate a random number in [0, 1) interval.
