@@ -1,9 +1,14 @@
 package interfaces
 
+import (
+	"fmt"
+)
+
 // Repository describes an interface for storing all the data about
 // experiments, including group partitions and variables assignments.
 type Repository interface {
 	CreateExperiment(ExperimentDescription) error
+	// TODO: See if this is needed.
 	GetExperiment(experiment_id string) (ExperimentDescription, error)
 	DestroyExperiment(experiment_id string) error
 
@@ -20,6 +25,15 @@ type Repository interface {
 type Store interface {
 	SetExperimentGroup(entity_id, experiment_id, group string) error
 	GetExperimentGroup(entity_id, experiment_id string) (string, error)
+}
+
+type NoGroupSet struct {
+	EntityID     string
+	ExperimentID string
+}
+
+func (e NoGroupSet) Error() string {
+	return fmt.Sprintf("There is no group set for entity id: %s and experiment: %s", e.EntityID, e.ExperimentID)
 }
 
 // Assigner describes an interface for deciding which group a specific entity

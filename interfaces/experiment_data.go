@@ -27,7 +27,7 @@ type GroupDescription struct {
 
 type ExperimentDescription struct {
 	// Info encapsulates general data about the experiment like ID and start time.
-	Info ExperimentInfo
+	ExperimentInfo
 	// VariablesInfo represents the map of allowed variables with their possible options.
 	VariablesInfo map[string]VariableOptions
 	// Group maps a group name to its corresponding description.
@@ -54,7 +54,7 @@ func (info *ExperimentInfo) Validate() error {
 func (desc *ExperimentDescription) Validate() error {
 	// Valdiate the ExperimentInfo
 	var err error
-	err = desc.Info.Validate()
+	err = desc.ExperimentInfo.Validate()
 	if err != nil {
 		return err
 	}
