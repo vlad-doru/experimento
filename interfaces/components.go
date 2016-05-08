@@ -6,6 +6,8 @@ import (
 
 // Repository describes an interface for storing all the data about
 // experiments, including group partitions and variables assignments.
+// It is the implementation's responsability to call Validate() on the
+// ExperimentDescription.
 type Repository interface {
 	// GetExperiments should return a map describing all the existing experiments.
 	// We recommend storing all the experiments locally, as this function is going to be

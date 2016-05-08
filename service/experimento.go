@@ -69,6 +69,11 @@ func (service *ExperimentoService) GetVariables(entity_id string, experiment int
 		// If there was no group set for this id we do not return with an error.
 		switch err.(type) {
 		case interfaces.NoGroupSet:
+			// First we check if the id is whitelisted.
+			group_id, ok := experiment.Whitelist[entity_id]
+			if ok == true {
+				break
+			}
 			// Get the group from the assigner
 			group_id, err = service.assigner.AssignGroup(entity_id, experiment)
 			if err != nil {
