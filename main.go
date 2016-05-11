@@ -17,7 +17,7 @@ func main() {
 
 	info := experiment.Info{
 		ID:   "experiment",
-		Seed: 26,
+		Seed: 24,
 		Size: 0.1,
 	}
 	varsInfo := map[string]experiment.VariableOptions{
@@ -43,7 +43,11 @@ func main() {
 		fmt.Printf("Eroare fatala: %v", err)
 		return
 	}
-	repository.CreateExperiment(desc)
+	err = repository.CreateExperiment(desc)
+	if err != nil {
+		fmt.Printf("Eroare fatal: %v", err)
+		return
+	}
 
 	s := service.NewExperimentoService(repository, store, assigner)
 	v, err := s.GetAllVariables("vlad")

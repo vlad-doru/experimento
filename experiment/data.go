@@ -46,6 +46,7 @@ type Description struct {
 	AuxiliaryInfo map[string]interface{}
 }
 
+// NewDescription returns a new, initialized, Description object.
 func NewDescription(
 	info Info,
 	varsInfo map[string]VariableOptions,
@@ -65,8 +66,8 @@ func NewDescription(
 	}
 	// Sort the group ids.
 	desc.SortedGroupIDs = make([]string, 0)
-	for group_id, _ := range desc.Groups {
-		desc.SortedGroupIDs = append(desc.SortedGroupIDs, group_id)
+	for groupID := range desc.Groups {
+		desc.SortedGroupIDs = append(desc.SortedGroupIDs, groupID)
 	}
 	sort.Strings(desc.SortedGroupIDs)
 	// Return the result.
@@ -96,7 +97,7 @@ func (desc *Description) Validate() error {
 		return err
 	}
 	// Validate the variables info.
-	for variable, _ := range desc.VariablesInfo {
+	for variable := range desc.VariablesInfo {
 		if variable == "" {
 			return fmt.Errorf("Invalid variable name: '' (empty string).")
 		}
@@ -125,10 +126,10 @@ func (desc *Description) Validate() error {
 		return fmt.Errorf("Invalid group sizes as they add up to %f, not 1.", totalSize)
 	}
 	// Validate the whitelist.
-	for entity_id, group_id := range desc.Whitelist {
-		_, ok := desc.Groups[group_id]
+	for entityID, groupID := range desc.Whitelist {
+		_, ok := desc.Groups[groupID]
 		if ok == false {
-			return fmt.Errorf("Invalid group: %s assigned to whitelisted entity id: %s.", group_id, entity_id)
+			return fmt.Errorf("Invalid group: %s assigned to whitelisted entity id: %s.", groupID, entityID)
 		}
 	}
 	return nil

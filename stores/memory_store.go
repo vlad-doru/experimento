@@ -19,24 +19,26 @@ func NewMemoryStore() *MemoryStore {
 
 // SetExperimentGroup sets the experiment group for a particular entity and
 // experiment, by saving the group id in memory.
-func (store *MemoryStore) SetExperimentGroup(entity_id, exp_id, group string) error {
-	m, ok := store.mapping[entity_id]
+func (store *MemoryStore) SetExperimentGroup(entityID, expID, group string) error {
+	m, ok := store.mapping[entityID]
 	if ok == false {
 		m = map[string]string{}
-		store.mapping[entity_id] = m
+		store.mapping[entityID] = m
 	}
-	m[exp_id] = group
+	m[expID] = group
 	return nil
 }
 
-func (store *MemoryStore) GetExperimentGroup(entity_id, exp_id string) (string, error) {
-	m, ok := store.mapping[entity_id]
+// GetExperimentGroup returns the id of the group in which a specific entity id
+// finds itself, in a specific experiment.
+func (store *MemoryStore) GetExperimentGroup(entityID, expID string) (string, error) {
+	m, ok := store.mapping[entityID]
 	if ok == false {
-		return "", interfaces.NoGroupSet{EntityID: entity_id, ExperimentID: exp_id}
+		return "", interfaces.NoGroupSet{EntityID: entityID, ExperimentID: expID}
 	}
-	group_id, ok := m[exp_id]
+	groupID, ok := m[expID]
 	if ok == false {
-		return "", interfaces.NoGroupSet{EntityID: entity_id, ExperimentID: exp_id}
+		return "", interfaces.NoGroupSet{EntityID: entityID, ExperimentID: expID}
 	}
-	return group_id, nil
+	return groupID, nil
 }

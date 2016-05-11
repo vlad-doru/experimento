@@ -22,10 +22,12 @@ type Repository interface {
 // group of an entity, given an experiment id.
 // We recommend using a high performance, in-memory, key-value database.
 type Store interface {
-	SetExperimentGroup(entity_id, exp_id, group string) error
-	GetExperimentGroup(entity_id, exp_id string) (string, error)
+	SetExperimentGroup(entityID, expID, group string) error
+	GetExperimentGroup(entityID, expID string) (string, error)
 }
 
+// NoGroupSet is a specific type of error which should be returned when an
+// entity id does not belong to any group.
 type NoGroupSet struct {
 	EntityID     string
 	ExperimentID string
@@ -38,5 +40,5 @@ func (e NoGroupSet) Error() string {
 // Assigner describes an interface for deciding which group a specific entity
 // will be mapped to.
 type Assigner interface {
-	AssignGroup(entity_id string, desc experiment.Description) (string, error)
+	AssignGroup(entityID string, desc experiment.Description) (string, error)
 }

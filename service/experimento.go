@@ -7,6 +7,7 @@ import (
 	"fmt"
 )
 
+// ExperimentoService is the main service exposed by our library.
 type ExperimentoService struct {
 	repository interfaces.Repository
 	store      interfaces.Store
@@ -17,6 +18,7 @@ type ExperimentoService struct {
 // 		exp_id -> variable_name -> variable_value
 type Variables map[string]map[string]string
 
+// NewExperimentoService return a new, ready to query, ExperimentoService object.
 func NewExperimentoService(
 	repository interfaces.Repository,
 	store interfaces.Store,
@@ -25,10 +27,11 @@ func NewExperimentoService(
 	return ExperimentoService{repository, store, assigner}
 }
 
+// GetAllVariables returns all the variables associated to an entity_id.
 // We only expose this function so that we encourage calling this function only once.
 // Had we exposed a GetExperimentVariables(exp_id) people would have proabably
 // chosen to call that multiple times, which would hurt the performance.
-func (service *ExperimentoService) GetAllVariables(entity_id string) (Variables, error) {
+func (service *ExperimentoService) GetAllVariables(entityID string) (Variables, error) {
 	// First we get all the existing experiments.
 	experiments, err := service.repository.GetExperiments()
 	if err != nil {
@@ -46,14 +49,14 @@ func (service *ExperimentoService) GetAllVariables(entity_id string) (Variables,
 	for id, desc := range experiments {
 		go func(id string, desc experiment.Description) {
 			// Get the variable then send it through the channel.
-			vars, err := service.GetVariables(entity_id, desc)
+			vars, err := service.getVariables(entityID, desc)
 			c <- expVar{id, vars, err}
 		}(id, desc)
 	}
 
 	result := Variables{}
 	// Collect the variables from all the experiments.
-	for _, _ = range experiments {
+	for _ = range experiments {
 		exp := <-c
 		if exp.err != nil {
 			return nil, exp.err
@@ -64,27 +67,27 @@ func (service *ExperimentoService) GetAllVariables(entity_id string) (Variables,
 	return result, nil
 }
 
-func (service *ExperimentoService) GetVariables(entity_id string, exp experiment.Description) (map[string]string, error) {
-	var group_id string
-	// TODO: Check if this id will go into the experiment.
-	group_id, err := service.store.GetExperimentGroup(entity_id, exp.ID)
+func (service *ExperimentoService) getVariables(entityID string, exp experiment.Description) (map[string]string, error) {
+	var groupID string
+	var err error
+	groupID, err = service.store.GetExperimentGroup(entityID, exp.ID)
 	if err != nil {
 		// If there was no group set for this id we do not return with an error.
 		switch err.(type) {
 		case interfaces.NoGroupSet:
 			// First we check if the id is whitelisted.
-			_, ok := exp.Whitelist[entity_id]
+			_, ok := exp.Whitelist[entityID]
 			if ok == true {
-				group_id = exp.Whitelist[entity_id]
+				groupID = exp.Whitelist[entityID]
 				break
 			}
 			// Get the group from the assigner
-			group_id, err = service.assigner.AssignGroup(entity_id, exp)
+			groupID, err = service.assigner.AssignGroup(entityID, exp)
 			if err != nil {
 				return nil, err
 			}
 			// Store the group.
-			err = service.store.SetExperimentGroup(entity_id, exp.ID, group_id)
+			err = service.store.SetExperimentGroup(entityID, exp.ID, groupID)
 			if err != nil {
 				return nil, err
 			}
@@ -94,9 +97,9 @@ func (service *ExperimentoService) GetVariables(entity_id string, exp experiment
 		}
 	}
 
-	group, ok := exp.Groups[group_id]
+	group, ok := exp.Groups[groupID]
 	if ok == false {
-		return nil, fmt.Errorf("Group with id %s does not exist!", group_id)
+		return nil, fmt.Errorf("Group with id %s does not exist!", groupID)
 	}
 
 	return group.Variables, nil

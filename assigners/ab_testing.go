@@ -14,26 +14,30 @@ func hash(s string) uint64 {
 	return h.Sum64()
 }
 
+// ABTesting assigner, used to distributed entity id's evenly, according to
+// each group's description.
 type ABTesting struct{}
 
+// NewABTesting returns a new ABTesting assigner.
 func NewABTesting() *ABTesting {
 	return &ABTesting{}
 }
 
-func (assigner *ABTesting) AssignGroup(entity_id string, desc experiment.Description) (string, error) {
+// AssignGroup returns the group id that will be assigned to a new entity id.
+func (assigner *ABTesting) AssignGroup(entityID string, desc experiment.Description) (string, error) {
 	// We get the hash based on the entity_id and xor it with the experiment seed.
-	id_seed := hash(entity_id) ^ desc.Seed
+	id_seed := hash(entityID) ^ desc.Seed
 	// We use this id_seed to generate a random number in [0, 1) interval.
 	generator := rand.New(rand.NewSource(int64(id_seed)))
 	r := generator.Float64()
 
 	// We use the previously generated random number to decide which group we map this id to.
 	s := 0.0
-	for _, group_id := range desc.SortedGroupIDs {
-		group := desc.Groups[group_id]
+	for _, groupID := range desc.SortedGroupIDs {
+		group := desc.Groups[groupID]
 		s += group.StartSize
 		if r < s {
-			return group_id, nil
+			return groupID, nil
 		}
 	}
 

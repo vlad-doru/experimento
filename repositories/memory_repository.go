@@ -12,28 +12,38 @@ type MemoryRepository struct {
 	experiments map[string]experiment.Description
 }
 
+// NewMemoryRepository returns a new MemoryRepository object.
 func NewMemoryRepository() *MemoryRepository {
 	experiments := make(map[string]experiment.Description)
 	return &MemoryRepository{experiments}
 }
 
-func (repository *MemoryRepository) CreateExperiment(experiment experiment.Description) {
+// CreateExperiment saves an experiment with the given description in the repository.
+func (repository *MemoryRepository) CreateExperiment(experiment experiment.Description) error {
+	_, ok := repository.experiments[experiment.ID]
+	if ok == true {
+		return fmt.Errorf("There is already an experiment with the given id: %s", experiment.ID)
+	}
 	repository.experiments[experiment.ID] = experiment
+	return nil
 }
 
-func (repository *MemoryRepository) GetExperiment(exp_id string) (experiment.Description, error) {
-	exp, ok := repository.experiments[exp_id]
+// GetExperiment returns the experiment description of the experiment with the
+// specified experiment id.
+func (repository *MemoryRepository) GetExperiment(expID string) (experiment.Description, error) {
+	exp, ok := repository.experiments[expID]
 	if ok == false {
-		return experiment.Description{}, fmt.Errorf("The experiment with id %s does not exist.", exp_id)
+		return experiment.Description{}, fmt.Errorf("The experiment with id %s does not exist.", expID)
 	}
 	return exp, nil
 }
 
-func (repository *MemoryRepository) DestroyExperiment(exp_id string) {
-	delete(repository.experiments, exp_id)
+// DestroyExperiment removes the experiment with the given id from the repository.
+func (repository *MemoryRepository) DestroyExperiment(expID string) {
+	delete(repository.experiments, expID)
 }
 
-// Implements the Repository interface.
+// GetExperiments returns all the current experiments form the memory.
 func (repository *MemoryRepository) GetExperiments() (map[string]experiment.Description, error) {
 	return repository.experiments, nil
 }
