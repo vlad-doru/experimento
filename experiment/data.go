@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"sort"
 	"time"
+
+	"github.com/vlad-doru/experimento/utils/hashing"
 )
 
 // GroupVariable is a special variable name, reserved by the framework.
@@ -11,9 +13,9 @@ const GroupVariable string = "group"
 
 // Info holds general information about the experiment.
 type Info struct {
-	ID   string
-	Seed uint64
-	Size float64
+	ID        string
+	SeedValue string
+	Size      float64
 }
 
 // Variables specifies values for variables.
@@ -45,6 +47,10 @@ type Description struct {
 	// We should use this random number generator for this experiment.
 	// We allow to have the group ids sorted since it will probably be often used.
 	SortedGroupIDs []string
+	// Seed based on the hash of the experiment name
+	InternalSeed uint64
+	// Seed based on the hash of the Seed field
+	Seed uint64
 	// We allow auxiliary information to be carried by the description.
 	AuxiliaryInfo map[string]interface{}
 }
@@ -67,6 +73,10 @@ func NewDescription(
 	if err != nil {
 		return desc, err
 	}
+	// Set the internal seed based on the hash of the experiment name.
+	desc.InternalSeed = hashing.Hash(desc.ID)
+	// Se the exeternal seed based on the hash of the given seed.
+	desc.Seed = hashing.Hash(desc.SeedValue)
 	// Sort the group ids.
 	desc.SortedGroupIDs = make([]string, 0)
 	for groupID, group := range desc.Groups {

@@ -3,6 +3,7 @@ package service
 import (
 	"github.com/vlad-doru/experimento/experiment"
 	"github.com/vlad-doru/experimento/interfaces"
+	"github.com/vlad-doru/experimento/utils/hashing"
 
 	"fmt"
 )
@@ -45,12 +46,21 @@ func (service *ExperimentoService) GetAllVariables(entityID string) (Variables, 
 		err  error
 	}
 
-	c := make(chan expVar)
+	c := make(chan *expVar)
 	for id, desc := range experiments {
 		go func(id string, desc experiment.Description) {
 			// Get the variable then send it through the channel.
 			vars, err := service.getVariables(entityID, desc)
-			c <- expVar{id, vars, err}
+			if err != nil {
+				// Send the error
+				c <- &expVar{id, vars, err}
+			} else if vars != nil {
+				// No error and we participate
+				c <- &expVar{id, vars, err}
+			} else {
+				// We send nil as this entity does not participate in this experiment.
+				c <- nil
+			}
 		}(id, desc)
 	}
 
@@ -58,6 +68,11 @@ func (service *ExperimentoService) GetAllVariables(entityID string) (Variables, 
 	// Collect the variables from all the experiments.
 	for _ = range experiments {
 		exp := <-c
+		if exp == nil {
+			// It means that our entity does not participate in this experiment.
+			continue
+		}
+		// Check if we had an error
 		if exp.err != nil {
 			return nil, exp.err
 		}
@@ -68,6 +83,15 @@ func (service *ExperimentoService) GetAllVariables(entityID string) (Variables, 
 }
 
 func (service *ExperimentoService) getVariables(entityID string, exp experiment.Description) (map[string]string, error) {
+	// First we check if the entity is whitelisted.
+	_, isWhitelisted := exp.Whitelist[entityID]
+	if isWhitelisted == false {
+		// Check if this entity's id falls in the experiment size.
+		if hashing.HashFloat(entityID, exp.InternalSeed) >= exp.Size {
+			// This entity does not participate
+			return nil, nil
+		}
+	}
 	var groupID string
 	var err error
 	groupID, err = service.store.GetExperimentGroup(entityID, exp.ID)
@@ -76,8 +100,7 @@ func (service *ExperimentoService) getVariables(entityID string, exp experiment.
 		switch err.(type) {
 		case interfaces.NoGroupSet:
 			// First we check if the id is whitelisted.
-			_, ok := exp.Whitelist[entityID]
-			if ok == true {
+			if isWhitelisted == true {
 				groupID = exp.Whitelist[entityID]
 				break
 			}

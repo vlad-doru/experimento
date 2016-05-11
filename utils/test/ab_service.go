@@ -14,10 +14,10 @@ import (
 )
 
 // ABExpTestSeed allows to change the seed of the test experiment.
-var ABExpTestSeed uint64 = 24
+var ABExpTestSeed = "experimento"
 
 // ABExpTestSize allows to change the size of the test experiment.
-var ABExpTestSize = 0.1
+var ABExpTestSize = 0.5
 
 // ABExpTestGroupASize controls the size of the control group.
 var ABExpTestGroupASize = 0.4
@@ -35,9 +35,9 @@ func GetABTestingService(t *testing.T) service.ExperimentoService {
 
 	// Set a specific random seed.
 	info := experiment.Info{
-		ID:   "experiment",
-		Seed: ABExpTestSeed,
-		Size: ABExpTestSize,
+		ID:        "experiment",
+		SeedValue: ABExpTestSeed,
+		Size:      ABExpTestSize,
 	}
 	varsInfo := map[string]experiment.VariableOptions{
 		"var": []string{"a", "b"},

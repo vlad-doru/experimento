@@ -11,6 +11,11 @@ func init() {
 
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
+// SetSeed sets the seed for the random number generator.
+func SetSeed(seed int64) {
+	rand.Seed(seed)
+}
+
 // RandString is used to generate a random string of length n.
 func RandString(n int) string {
 	b := make([]rune, n)
