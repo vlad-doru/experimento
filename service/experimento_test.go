@@ -11,7 +11,7 @@ import (
 func TestABTestingBasic(t *testing.T) {
 	s := test.GetABTestingService(t)
 
-	v, err := s.GetAllVariables("vlad")
+	v, err := s.GetAllVariables("doru")
 
 	assert.Nil(t, err, "Error while getting all variables %v", err)
 	assert.NotNil(t, v, "Empty all variables map")
@@ -61,7 +61,7 @@ func TestABTestingDistribution(t *testing.T) {
 	// Count the result from each group.
 	groupACount := 0.0
 	groupBCount := 0.0
-	nonParticipating := 0.0
+	noGroupCount := 0.0
 	sampleSize := 100000
 	for i := 0; i < sampleSize; i++ {
 		randID := test.RandString(10)
@@ -76,7 +76,7 @@ func TestABTestingDistribution(t *testing.T) {
 			groupBCount++
 			break
 		case "":
-			nonParticipating++
+			noGroupCount++
 			break
 		default:
 			assert.Fail(t, "Invalid group %s", group)
@@ -84,9 +84,8 @@ func TestABTestingDistribution(t *testing.T) {
 	}
 	groupARatio := groupACount / float64(expSize*float64(sampleSize))
 	groupBRatio := groupBCount / float64(expSize*float64(sampleSize))
-	noGroupRatio := nonParticipating / float64(sampleSize)
+	noGroupRatio := noGroupCount / float64(sampleSize)
 	assert.InEpsilon(t, groupASize, groupARatio, 0.01, "Invalid ratio difference for control group")
 	assert.InEpsilon(t, groupBSize, groupBRatio, 0.01, "Invalid ratio difference for test group")
 	assert.InEpsilon(t, 1-expSize, noGroupRatio, 0.01, "Invalid ratio difference for non participating group")
-	t.Logf("%v %v %v", nonParticipating, groupACount, groupBCount)
 }
