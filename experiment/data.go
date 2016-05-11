@@ -6,6 +6,9 @@ import (
 	"time"
 )
 
+// GroupVariable is a special variable name, reserved by the framework.
+const GroupVariable string = "group"
+
 // Info holds general information about the experiment.
 type Info struct {
 	ID   string
@@ -66,8 +69,10 @@ func NewDescription(
 	}
 	// Sort the group ids.
 	desc.SortedGroupIDs = make([]string, 0)
-	for groupID := range desc.Groups {
+	for groupID, group := range desc.Groups {
 		desc.SortedGroupIDs = append(desc.SortedGroupIDs, groupID)
+		// Set the special variable name, GroupVariable.
+		group.Variables[GroupVariable] = groupID
 	}
 	sort.Strings(desc.SortedGroupIDs)
 	// Return the result.
@@ -100,6 +105,9 @@ func (desc *Description) Validate() error {
 	for variable := range desc.VariablesInfo {
 		if variable == "" {
 			return fmt.Errorf("Invalid variable name: '' (empty string).")
+		}
+		if variable == GroupVariable {
+			return fmt.Errorf("Invalid variable name: %s. It is a reserved variable name!", variable)
 		}
 	}
 	// Validate the group descriptions.
