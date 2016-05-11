@@ -8,10 +8,9 @@ import (
 
 // Info holds general information about the experiment.
 type Info struct {
-	ID      string
-	Started time.Time
-	Seed    uint64
-	Size    float64
+	ID   string
+	Seed uint64
+	Size float64
 }
 
 // Variables specifies values for variables.
@@ -31,6 +30,8 @@ type GroupDescription struct {
 type Description struct {
 	// Info encapsulates general data about the experiment like ID and start time.
 	Info
+	// Started tells us when we strted the experiment.
+	Started time.Time
 	// VariablesInfo represents the map of allowed variables with their possible options.
 	VariablesInfo map[string]VariableOptions
 	// Group maps a group name to its corresponding description.
@@ -53,6 +54,7 @@ func NewDescription(
 ) (Description, error) {
 	desc := Description{
 		Info:          info,
+		Started:       time.Now(),
 		VariablesInfo: varsInfo,
 		Groups:        groups,
 		Whitelist:     whitelist}

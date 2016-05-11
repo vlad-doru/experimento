@@ -12,6 +12,11 @@ type MemoryRepository struct {
 	experiments map[string]experiment.Description
 }
 
+func NewMemoryRepository() *MemoryRepository {
+	experiments := make(map[string]experiment.Description)
+	return &MemoryRepository{experiments}
+}
+
 func (repository *MemoryRepository) CreateExperiment(experiment experiment.Description) {
 	repository.experiments[experiment.ID] = experiment
 }

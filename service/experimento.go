@@ -65,14 +65,17 @@ func (service *ExperimentoService) GetAllVariables(entity_id string) (Variables,
 }
 
 func (service *ExperimentoService) GetVariables(entity_id string, exp experiment.Description) (map[string]string, error) {
+	var group_id string
+	// TODO: Check if this id will go into the experiment.
 	group_id, err := service.store.GetExperimentGroup(entity_id, exp.ID)
 	if err != nil {
 		// If there was no group set for this id we do not return with an error.
 		switch err.(type) {
 		case interfaces.NoGroupSet:
 			// First we check if the id is whitelisted.
-			group_id, ok := exp.Whitelist[entity_id]
+			_, ok := exp.Whitelist[entity_id]
 			if ok == true {
+				group_id = exp.Whitelist[entity_id]
 				break
 			}
 			// Get the group from the assigner
