@@ -46,7 +46,7 @@ func (service *ExperimentoService) GetAllVariables(entityID string) (Variables, 
 		err  error
 	}
 
-	c := make(chan *expVar, len(experiments))
+	c := make(chan *expVar, len(experiments)) // buffered so we don't wait on write
 	validExperiments := 0
 	entityIDHash := hashing.Hash(entityID)
 	for id, desc := range experiments {

@@ -42,3 +42,16 @@ func (e NoGroupSet) Error() string {
 type Assigner interface {
 	AssignGroup(entityID string, desc experiment.Description) (string, error)
 }
+
+// Aggregator is an interface that is responsible for providing a
+// value for an experiment, representing the efficiency. The greater this value,
+// then the most successful the experiment was. If the experiment is interested
+// in multiple metrics, then it is the implementation's responsability to
+// correctly aggregate them into one single value.
+//
+// The aggregator interface is not used anywhere in the Experimento service,
+// but is useful as an interface, since a multi arm bandit approach for ids
+// assignation may query an aggregator for partial results.
+type Aggregator interface {
+	Efficiency(expID string) (float64, error)
+}

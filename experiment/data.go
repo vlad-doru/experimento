@@ -8,6 +8,8 @@ import (
 	"github.com/vlad-doru/experimento/utils/hashing"
 )
 
+// TODO: Add tests for the structures in this file.
+
 // GroupVariable is a special variable name, reserved by the framework.
 const GroupVariable string = "group"
 
