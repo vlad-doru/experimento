@@ -104,7 +104,7 @@ func BenchmarkABTesting(b *testing.B) {
 	}
 	// Generate 1000 random ids.
 	randIDs := []string{}
-	const sampleSize int = 10000
+	const sampleSize int = 1000
 	for i := 0; i < sampleSize; i++ {
 		id := test.RandString(6, 10)
 		randIDs = append(randIDs, id)
