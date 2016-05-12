@@ -23,9 +23,9 @@ type Variables map[string]map[string]string
 func NewExperimentoService(
 	repository interfaces.Repository,
 	store interfaces.Store,
-	assigner interfaces.Assigner) ExperimentoService {
+	assigner interfaces.Assigner) *ExperimentoService {
 
-	return ExperimentoService{repository, store, assigner}
+	return &ExperimentoService{repository, store, assigner}
 }
 
 // GetAllVariables returns all the variables associated to an entity_id.

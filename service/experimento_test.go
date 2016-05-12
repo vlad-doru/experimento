@@ -9,7 +9,8 @@ import (
 // TestGetAllVariablesBasic tests a simple usecase which should always yield the
 // same value for an AB testing service.
 func TestABTestingBasic(t *testing.T) {
-	s := test.GetABTestingService(t)
+	s, err := test.GetABTestingService()
+	assert.Nil(t, err, "Error while getting the experimento service")
 
 	v, err := s.GetAllVariables("doru")
 
@@ -22,7 +23,8 @@ func TestABTestingBasic(t *testing.T) {
 
 func TestABTestingDeterminism(t *testing.T) {
 	test.SetSeed(1) // set the seed so that we can easily replicate results
-	s := test.GetABTestingService(t)
+	s, err := test.GetABTestingService()
+	assert.Nil(t, err, "Error while getting the experimento service")
 	initialGroup := map[string]string{}
 	// Generate 1000 random string and check that
 	// if we call the function 1000 times for each we get the same group.
@@ -53,7 +55,8 @@ func TestABTestingDeterminism(t *testing.T) {
 
 func TestABTestingDistribution(t *testing.T) {
 	test.SetSeed(1) // set the seed so that we can easily replicate results
-	s := test.GetABTestingService(t)
+	s, err := test.GetABTestingService()
+	assert.Nil(t, err, "Error while getting the experimento service")
 	groupASize := test.ABExpTestGroupASize
 	groupBSize := test.ABExpTestGroupBSize
 	expSize := test.ABExpTestSize
@@ -93,8 +96,12 @@ func TestABTestingDistribution(t *testing.T) {
 func BenchmarkABTesting(b *testing.B) {
 	// Stop the benchmark timer.
 	b.StopTimer()
-	test.SetSeed(1)                         // set the seed so that we can easily replicate results
-	s := test.GetABTestingServiceN(nil, 50) // get a service with 50 experiments
+	test.SetSeed(1)                          // set the seed so that we can easily replicate results
+	s, err := test.GetABTestingServiceN(100) // get a service with 100 experiments
+	if err != nil {
+		b.Logf("Error while creating the service: %s", err)
+		b.FailNow()
+	}
 	// Generate 1000 random ids.
 	randIDs := []string{}
 	const sampleSize int = 10000
@@ -114,6 +121,11 @@ func BenchmarkABTesting(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		id := randIDs[currentIndex]
 		incrementIndex()
-		s.GetAllVariables(id)
+		_, err := s.GetAllVariables(id)
+		if err != nil {
+			b.Logf("What %v", err)
+			b.FailNow()
+
+		}
 	}
 }

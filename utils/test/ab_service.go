@@ -1,16 +1,14 @@
 package test
 
 import (
-	"testing"
-
 	"github.com/vlad-doru/experimento/assigners"
 	"github.com/vlad-doru/experimento/experiment"
 	"github.com/vlad-doru/experimento/repositories"
 	"github.com/vlad-doru/experimento/stores"
 
-	"github.com/vlad-doru/experimento/service"
+	"math/rand"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/vlad-doru/experimento/service"
 )
 
 // ABExpTestSeed allows to change the seed of the test experiment.
@@ -27,14 +25,14 @@ var ABExpTestGroupBSize = 0.6
 
 // GetABTestingService allows us to get an Experimento service using A/B testing
 // that will be useful for testing.
-func GetABTestingService(t *testing.T) service.ExperimentoService {
-	return GetABTestingServiceN(t, 0)
+func GetABTestingService() (*service.ExperimentoService, error) {
+	return GetABTestingServiceN(0)
 }
 
 // GetABTestingServiceN allows us to get an Experimento service using A/B testing
 // that will be useful for testing. This service will have n + 1 experiments
 // associated with it.
-func GetABTestingServiceN(t *testing.T, n int) service.ExperimentoService {
+func GetABTestingServiceN(n int) (*service.ExperimentoService, error) {
 	repository := repositories.NewMemoryRepository()
 	store := stores.NewMemoryStore()
 	assigner := assigners.NewABTesting()
@@ -64,24 +62,43 @@ func GetABTestingServiceN(t *testing.T, n int) service.ExperimentoService {
 	}
 	// Create a new description with the info described above.
 	desc, err := experiment.NewDescription(info, varsInfo, groups, nil)
-	if t != nil {
-		assert.Nil(t, err, "Creating a new description")
+	if err != nil {
+		return nil, err
 	}
 	err = repository.CreateExperiment(desc)
-	if t != nil {
-		assert.Nil(t, err, "Creating an experiment")
+	if err != nil {
+		return nil, err
 	}
 	for i := 0; i < n; i++ {
-		copyInfo := info
-		copyInfo.ID = RandStringN(20)
-		desc, err := experiment.NewDescription(copyInfo, varsInfo, groups, nil)
-		if t != nil {
-			assert.Nil(t, err, "Creating a new description")
+		randInfo := experiment.Info{
+			ID:        RandStringN(20),
+			SeedValue: RandStringN(20),
+			Size:      rand.Float64(),
+		}
+		randInfo.ID = RandStringN(20)
+		controlSize := rand.Float64()
+		randGroups := map[string]experiment.GroupDescription{
+			"control": experiment.GroupDescription{
+				StartSize: controlSize,
+				Variables: experiment.Variables{
+					"var": "a",
+				},
+			},
+			"test": experiment.GroupDescription{
+				StartSize: 1 - controlSize,
+				Variables: experiment.Variables{
+					"var": "b",
+				},
+			},
+		}
+		desc, err := experiment.NewDescription(randInfo, varsInfo, randGroups, nil)
+		if err != nil {
+			return nil, err
 		}
 		err = repository.CreateExperiment(desc)
-		if t != nil {
-			assert.Nil(t, err, "Creating an experiment")
+		if err != nil {
+			return nil, err
 		}
 	}
-	return service.NewExperimentoService(repository, store, assigner)
+	return service.NewExperimentoService(repository, store, assigner), nil
 }
