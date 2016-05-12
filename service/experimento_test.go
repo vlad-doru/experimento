@@ -125,7 +125,6 @@ func BenchmarkABTesting(b *testing.B) {
 		if err != nil {
 			b.Logf("What %v", err)
 			b.FailNow()
-
 		}
 	}
 }
