@@ -27,7 +27,7 @@ func TestABTestingDeterminism(t *testing.T) {
 	// Generate 1000 random string and check that
 	// if we call the function 1000 times for each we get the same group.
 	for i := 0; i < 100; i++ {
-		randID := test.RandString(10)
+		randID := test.RandString(6, 10)
 		v, err := s.GetAllVariables(randID)
 		assert.Nil(t, err, "Could not get all the variables: %v", err)
 		group := v["experiment"]["group"]
@@ -64,7 +64,7 @@ func TestABTestingDistribution(t *testing.T) {
 	noGroupCount := 0.0
 	sampleSize := 100000
 	for i := 0; i < sampleSize; i++ {
-		randID := test.RandString(10)
+		randID := test.RandString(6, 10)
 		v, err := s.GetAllVariables(randID)
 		assert.Nil(t, err, "Could not get all the variables: %v", err)
 		group := v["experiment"]["group"]
@@ -88,4 +88,32 @@ func TestABTestingDistribution(t *testing.T) {
 	assert.InEpsilon(t, groupASize, groupARatio, 0.01, "Invalid ratio difference for control group")
 	assert.InEpsilon(t, groupBSize, groupBRatio, 0.01, "Invalid ratio difference for test group")
 	assert.InEpsilon(t, 1-expSize, noGroupRatio, 0.01, "Invalid ratio difference for non participating group")
+}
+
+func BenchmarkABTesting(b *testing.B) {
+	// Stop the benchmark timer.
+	b.StopTimer()
+	test.SetSeed(1)                         // set the seed so that we can easily replicate results
+	s := test.GetABTestingServiceN(nil, 50) // get a service with 50 experiments
+	// Generate 1000 random ids.
+	randIDs := []string{}
+	const sampleSize int = 10000
+	for i := 0; i < sampleSize; i++ {
+		id := test.RandString(6, 10)
+		randIDs = append(randIDs, id)
+	}
+	currentIndex := 0
+	incrementIndex := func() {
+		currentIndex++
+		if currentIndex == sampleSize {
+			currentIndex = 0
+		}
+	}
+	// Restart the timer.
+	b.StartTimer()
+	for i := 0; i < b.N; i++ {
+		id := randIDs[currentIndex]
+		incrementIndex()
+		s.GetAllVariables(id)
+	}
 }

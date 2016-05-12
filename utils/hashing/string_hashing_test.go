@@ -5,12 +5,19 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/vlad-doru/experimento/utils/hashing"
+	"github.com/vlad-doru/experimento/utils/test"
 )
 
 func TestHashFloat(t *testing.T) {
 	seed := hashing.Hash("experimento")
-	f := hashing.HashFloat("hash", seed)
-	assert.True(t, (f >= 0) && (f < 1), "Invariant violation of the hash function")
+	test.SetSeed(1) // set the seed so that we can easily replicate test results
+	// Check the HashFloat function for 100K random ids.
+	for i := 0; i < 100000; i++ {
+		id := test.RandString(6, 10)
+		f := hashing.HashFloat(id, seed)
+		assert.True(t, (f >= 0) && (f < 1),
+			"Invariant violation of the hash function for id %s: %v", id, f)
+	}
 }
 
 func BenchmarkHash(b *testing.B) {

@@ -20,3 +20,9 @@ func HashFloat(s string, seed uint64) float64 {
 	x := float64(idSeed) / 1000000000
 	return x - math.Floor(x)
 }
+
+// MapUint64ToFloat converts an uint64 into a [0, 1)
+func MapUint64ToFloat(s, seed uint64) float64 {
+	x := float64(s^seed) / 1000000000
+	return x - math.Floor(x)
+}

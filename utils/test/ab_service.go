@@ -28,7 +28,13 @@ var ABExpTestGroupBSize = 0.6
 // GetABTestingService allows us to get an Experimento service using A/B testing
 // that will be useful for testing.
 func GetABTestingService(t *testing.T) service.ExperimentoService {
+	return GetABTestingServiceN(t, 0)
+}
 
+// GetABTestingServiceN allows us to get an Experimento service using A/B testing
+// that will be useful for testing. This service will have n + 1 experiments
+// associated with it.
+func GetABTestingServiceN(t *testing.T, n int) service.ExperimentoService {
 	repository := repositories.NewMemoryRepository()
 	store := stores.NewMemoryStore()
 	assigner := assigners.NewABTesting()
@@ -58,8 +64,24 @@ func GetABTestingService(t *testing.T) service.ExperimentoService {
 	}
 	// Create a new description with the info described above.
 	desc, err := experiment.NewDescription(info, varsInfo, groups, nil)
-	assert.Nil(t, err, "Creating a new description")
+	if t != nil {
+		assert.Nil(t, err, "Creating a new description")
+	}
 	err = repository.CreateExperiment(desc)
-	assert.Nil(t, err, "Creating an experiment")
+	if t != nil {
+		assert.Nil(t, err, "Creating an experiment")
+	}
+	for i := 0; i < n; i++ {
+		copyInfo := info
+		copyInfo.ID = RandStringN(20)
+		desc, err := experiment.NewDescription(copyInfo, varsInfo, groups, nil)
+		if t != nil {
+			assert.Nil(t, err, "Creating a new description")
+		}
+		err = repository.CreateExperiment(desc)
+		if t != nil {
+			assert.Nil(t, err, "Creating an experiment")
+		}
+	}
 	return service.NewExperimentoService(repository, store, assigner)
 }
