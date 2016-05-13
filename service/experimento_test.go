@@ -2,7 +2,11 @@ package service_test
 
 import (
 	"github.com/stretchr/testify/assert"
+	"github.com/vlad-doru/experimento/aggregators"
 	"github.com/vlad-doru/experimento/utils/test"
+
+	"math/rand"
+
 	"testing"
 )
 
@@ -130,8 +134,9 @@ func BenchmarkABTesting(b *testing.B) {
 }
 
 func TestProbMultiArmBanditDistribution(t *testing.T) {
-	test.SetSeed(2) // set the seed so that we can easily replicate results
-	s, err := test.GetBanditTestingService(0)
+	test.SetSeed(1) // set the seed so that we can easily replicate results
+	agg := aggregators.NewSingleMetricMemoryAggregator()
+	s, err := test.GetBanditTestingService(agg, 0)
 	assert.Nil(t, err, "Error while getting the experimento service")
 	groupASize := test.ExpTestGroupASize
 	groupBSize := test.ExpTestGroupBSize
@@ -141,7 +146,16 @@ func TestProbMultiArmBanditDistribution(t *testing.T) {
 	groupACount := 0.0
 	groupBCount := 0.0
 	noGroupCount := 0.0
-	sampleSize := 100000
+	sampleSize := 200000
+
+	groupAMetricMean := 0.40
+	groupBMetricMean := 0.20
+
+	expectedGroupARatio := test.BanditHoldoutSize*groupASize +
+		(1.0-test.BanditHoldoutSize)*(groupAMetricMean/(groupAMetricMean+groupBMetricMean))
+	expectedGroupBRatio := test.BanditHoldoutSize*groupBSize +
+		(1.0-test.BanditHoldoutSize)*(groupBMetricMean/(groupAMetricMean+groupBMetricMean))
+
 	for i := 0; i < sampleSize; i++ {
 		randID := test.RandString(6, 10)
 		v, err := s.GetAllVariables(randID)
@@ -152,8 +166,20 @@ func TestProbMultiArmBanditDistribution(t *testing.T) {
 		switch group {
 		case "control":
 			groupACount++
+			r := rand.Float64()
+			v := 0.0
+			if r < groupAMetricMean {
+				v = 1.0
+			}
+			agg.AddMetric("experiment", "control", v)
 			break
 		case "test":
+			r := rand.Float64()
+			v := 0.0
+			if r < groupBMetricMean {
+				v = 1.0
+			}
+			agg.AddMetric("experiment", "test", v)
 			groupBCount++
 			break
 		case "":
@@ -166,7 +192,7 @@ func TestProbMultiArmBanditDistribution(t *testing.T) {
 	groupARatio := groupACount / float64(expSize*float64(sampleSize))
 	groupBRatio := groupBCount / float64(expSize*float64(sampleSize))
 	noGroupRatio := noGroupCount / float64(sampleSize)
-	assert.InEpsilon(t, groupASize, groupARatio, 0.01, "Invalid ratio difference for control group")
-	assert.InEpsilon(t, groupBSize, groupBRatio, 0.01, "Invalid ratio difference for test group")
+	assert.InEpsilon(t, expectedGroupARatio, groupARatio, 0.01, "Invalid ratio difference for control group")
+	assert.InEpsilon(t, expectedGroupBRatio, groupBRatio, 0.01, "Invalid ratio difference for test group")
 	assert.InEpsilon(t, 1-expSize, noGroupRatio, 0.01, "Invalid ratio difference for non participating group")
 }

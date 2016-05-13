@@ -29,39 +29,18 @@ func NewSingleMetricMemoryAggregator() *SingleMetricMemoryAggregator {
 		make(chan tuple, batchSize), // buffer size of 1000 metrics
 		sync.RWMutex{},
 	}
-	// Launch a gorutine that will handle the aggregation part.
-	go func() {
-		i := 0
-		localMetricsSum := expGroupMetric{}
-		localMetricsCount := expGroupMetric{}
-		for true {
-			tv := <-agg.c
-			localMetricsSum[tv.e][tv.g] += tv.v
-			localMetricsCount[tv.e][tv.g]++
-			i++
-			// Update the global memory aggregator tables on batchSize.
-			if i&batchSize == 0 {
-				agg.mutex.Lock()
-				for e, m := range localMetricsSum {
-					for g := range m {
-						agg.metricsSum[e][g] += localMetricsSum[e][g]
-						agg.metricsCount[e][g] += localMetricsCount[e][g]
-					}
-				}
-				agg.mutex.Unlock()
-			}
-		}
-	}()
 	return agg
 }
 
 // AddMetric adds the specificed value to the metric of the specificed groupID.
 func (agg *SingleMetricMemoryAggregator) AddMetric(expID, groupID string, value float64) {
-	agg.c <- tuple{
-		e: expID,
-		g: groupID,
-		v: value,
+	_, ok := agg.metricsSum[expID]
+	if ok == false {
+		agg.metricsSum[expID] = make(map[string]float64)
+		agg.metricsCount[expID] = make(map[string]float64)
 	}
+	agg.metricsSum[expID][groupID] += value
+	agg.metricsCount[expID][groupID]++
 }
 
 func (agg *SingleMetricMemoryAggregator) Efficiency(expID string) (map[string]float64, error) {

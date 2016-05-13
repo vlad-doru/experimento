@@ -6,6 +6,7 @@ import (
 	"github.com/vlad-doru/experimento/utils/hashing"
 
 	"fmt"
+	"math/rand"
 )
 
 // ProbBandit assigner, uses a combination of the multi armed bandit
@@ -29,8 +30,9 @@ func NewProbBandit(aggregator interfaces.Aggregator, holdoutSize float64) (*Prob
 // AssignGroup returns the group id that will be assigned to a new entity id.
 func (assigner *ProbBandit) AssignGroup(entityID string, desc experiment.Description) (string, error) {
 	entityHash := hashing.Hash(entityID)
-	internalR := hashing.MapUint64ToFloat(entityHash, desc.InternalSeed^desc.Seed)
-	r := hashing.MapUint64ToFloat(entityHash, desc.InternalSeed^desc.Seed)
+	// internalR := hashing.MapUint64ToFloat(entityHash, desc.InternalSeed^desc.Seed)
+	internalR := rand.Float64()
+	r := hashing.MapUint64ToFloat(entityHash, desc.Seed)
 
 	if internalR < assigner.holdoutSize {
 		// If in the holdout take a classical A/B testing approach.
@@ -41,17 +43,17 @@ func (assigner *ProbBandit) AssignGroup(entityID string, desc experiment.Descrip
 	efficiencies, err := assigner.aggregator.Efficiency(desc.ID)
 	// If we don't have efficiency results yet, or an error occured, use the
 	// classical A/B testing method.
-	if (err != nil) || (efficiencies == nil) {
+	if (err != nil) || (efficiencies == nil) || (len(efficiencies) < len(desc.SortedGroupIDs)) {
 		return assigner.abChoice(r, desc)
 	}
 
 	totalEfficiency := 0.0
 	for _, groupID := range desc.SortedGroupIDs {
-		efficiency, ok := efficiencies[groupID]
-		if !ok {
-			return "", fmt.Errorf("Aggregator returned efficiencies, but did not include group: %s", groupID)
-		}
+		efficiency := efficiencies[groupID]
 		totalEfficiency += efficiency
+	}
+	if totalEfficiency == 0 {
+		return assigner.abChoice(r, desc)
 	}
 	s := 0.0
 	for _, groupID := range desc.SortedGroupIDs {
@@ -62,7 +64,7 @@ func (assigner *ProbBandit) AssignGroup(entityID string, desc experiment.Descrip
 		}
 	}
 
-	return "", fmt.Errorf("Could not generate a valid group id. Please investigate the algorithm: %v", r)
+	return "", fmt.Errorf("Could not generate a valid group id. Please investigate the algorithm: %v %v", r, s)
 }
 
 func (assigner *ProbBandit) abChoice(r float64, desc experiment.Description) (string, error) {

@@ -1,7 +1,6 @@
 package test
 
 import (
-	"github.com/vlad-doru/experimento/aggregators"
 	"github.com/vlad-doru/experimento/assigners"
 	"github.com/vlad-doru/experimento/experiment"
 	"github.com/vlad-doru/experimento/interfaces"
@@ -34,8 +33,7 @@ func GetABTestingService(n int) (*service.ExperimentoService, error) {
 	return GetTestingService(assigners.NewABTesting(), n)
 }
 
-func GetBanditTestingService(n int) (*service.ExperimentoService, error) {
-	agg := aggregators.NewSingleMetricMemoryAggregator()
+func GetBanditTestingService(agg interfaces.Aggregator, n int) (*service.ExperimentoService, error) {
 	bandit, err := assigners.NewProbBandit(agg, BanditHoldoutSize)
 	if err != nil {
 		return nil, err
