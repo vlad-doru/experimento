@@ -8,7 +8,7 @@ type tuple struct {
 	v float64
 }
 
-type expGroupMetric map[string]map[string]float64
+type metricMap map[string]map[string]float64
 
 // SingleMetricMemoryAggregator represents a very simple and basic
 // implementation of the aggregator interface.
@@ -16,9 +16,10 @@ type expGroupMetric map[string]map[string]float64
 // Note: This implementation is not designed for concurrent use.
 type SingleMetricMemoryAggregator struct {
 	// experiment_id -> group_id -> value
-	metricsSum   expGroupMetric
-	metricsCount expGroupMetric
-	c            chan tuple
+	mean  metricMap // mean of the metric
+	count metricMap // number of values recorder
+	m2    metricMap // used for computing the variance online
+	c     chan tuple
 }
 
 const batchSize = (1 << 10) - 1
@@ -27,8 +28,9 @@ const batchSize = (1 << 10) - 1
 // SingleMetricMemoryAggregator which is designed mainly for testing.
 func NewSingleMetricMemoryAggregator() *SingleMetricMemoryAggregator {
 	agg := &SingleMetricMemoryAggregator{
-		expGroupMetric{},
-		expGroupMetric{},
+		metricMap{},
+		metricMap{},
+		metricMap{},
 		make(chan tuple, batchSize), // buffer size of 1000 metrics
 	}
 	return agg
@@ -36,23 +38,35 @@ func NewSingleMetricMemoryAggregator() *SingleMetricMemoryAggregator {
 
 // AddMetric adds the specificed value to the metric of the specificed groupID.
 func (agg *SingleMetricMemoryAggregator) AddMetric(expID, groupID string, value float64) {
-	_, ok := agg.metricsSum[expID]
+	_, ok := agg.mean[expID]
 	if ok == false {
-		agg.metricsSum[expID] = make(map[string]float64)
-		agg.metricsCount[expID] = make(map[string]float64)
+		agg.mean[expID] = map[string]float64{groupID: value}
+		agg.count[expID] = map[string]float64{groupID: 1}
+		agg.m2[expID] = map[string]float64{groupID: 0}
+		return
 	}
-	agg.metricsSum[expID][groupID] += value
-	agg.metricsCount[expID][groupID]++
+	n := agg.count[expID][groupID]
+	mean := agg.mean[expID][groupID]
+	m2 := agg.m2[expID][groupID]
+	delta := value - mean
+	n++
+	mean += delta / n
+	m2 += delta * (value - mean)
+	agg.count[expID][groupID] = n
+	agg.mean[expID][groupID] = mean
+	agg.m2[expID][groupID] = m2
 }
 
 // Efficiency gets efficiencies for all groups, for a certain experiment id.
 func (agg *SingleMetricMemoryAggregator) Efficiency(expID string) (map[string]float64, error) {
 	result := map[string]float64{}
-	if len(agg.metricsSum[expID]) == 0 {
+	if len(agg.mean[expID]) == 0 {
 		return nil, nil
 	}
-	for g := range agg.metricsSum[expID] {
-		result[g] = agg.metricsSum[expID][g] / agg.metricsCount[expID][g]
+	for g, v := range agg.mean[expID] {
+		result[g] = v
 	}
 	return result, nil
 }
+
+// TODO: Implement a method for getting the confidence intervals and use that in the simulation.
