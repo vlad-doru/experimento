@@ -24,6 +24,7 @@ var ExpTestGroupASize = 0.4
 // ExpTestGroupBSize controls the size of the test group.
 var ExpTestGroupBSize = 0.6
 
+// BanditHoldoutSize controls the holdout size in multiarm bandit method.
 var BanditHoldoutSize = 0.1
 
 // GetABTestingService allows us to get an Experimento service using A/B testing
@@ -33,6 +34,8 @@ func GetABTestingService(n int) (*service.ExperimentoService, error) {
 	return GetTestingService(assigners.NewABTesting(), n)
 }
 
+// GetBanditTestingService allows us to get an Experimento service using
+// a multi arm bandit assigner, using the aggregator specified in the argument.
 func GetBanditTestingService(agg interfaces.Aggregator, n int) (*service.ExperimentoService, error) {
 	bandit, err := assigners.NewProbBandit(agg, BanditHoldoutSize)
 	if err != nil {
@@ -41,6 +44,8 @@ func GetBanditTestingService(agg interfaces.Aggregator, n int) (*service.Experim
 	return GetTestingService(bandit, n)
 }
 
+// GetTestingService allows us to get an experimento service for testing, using
+// the specified assigner.
 func GetTestingService(assigner interfaces.Assigner, n int) (*service.ExperimentoService, error) {
 	repository := repositories.NewMemoryRepository()
 	store := stores.NewMemoryStore()
