@@ -22,7 +22,7 @@ type SingleMetricMemoryAggregator struct {
 
 const batchSize = (1 << 10) - 1
 
-func NewMemoryAggregator() *SingleMetricMemoryAggregator {
+func NewSingleMetricMemoryAggregator() *SingleMetricMemoryAggregator {
 	agg := &SingleMetricMemoryAggregator{
 		expGroupMetric{},
 		expGroupMetric{},
@@ -67,6 +67,9 @@ func (agg *SingleMetricMemoryAggregator) AddMetric(expID, groupID string, value 
 func (agg *SingleMetricMemoryAggregator) Efficiency(expID string) (map[string]float64, error) {
 	result := map[string]float64{}
 	agg.mutex.RLock()
+	if len(agg.metricsSum[expID]) == 0 {
+		return nil, nil
+	}
 	for g := range agg.metricsSum[expID] {
 		result[g] = agg.metricsSum[expID][g] / agg.metricsCount[expID][g]
 	}

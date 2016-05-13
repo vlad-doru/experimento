@@ -1,8 +1,10 @@
 package test
 
 import (
+	"github.com/vlad-doru/experimento/aggregators"
 	"github.com/vlad-doru/experimento/assigners"
 	"github.com/vlad-doru/experimento/experiment"
+	"github.com/vlad-doru/experimento/interfaces"
 	"github.com/vlad-doru/experimento/repositories"
 	"github.com/vlad-doru/experimento/stores"
 
@@ -11,50 +13,58 @@ import (
 	"github.com/vlad-doru/experimento/service"
 )
 
-// ABExpTestSeed allows to change the seed of the test experiment.
-var ABExpTestSeed = "experimento"
+// ExpTestSeed allows to change the seed of the test experiment.
+var ExpTestSeed = "experimento"
 
-// ABExpTestSize allows to change the size of the test experiment.
-var ABExpTestSize = 0.5
+// ExpTestSize allows to change the size of the test experiment.
+var ExpTestSize = 0.5
 
-// ABExpTestGroupASize controls the size of the control group.
-var ABExpTestGroupASize = 0.4
+// ExpTestGroupASize controls the size of the control group.
+var ExpTestGroupASize = 0.4
 
-// ABExpTestGroupBSize controls the size of the test group.
-var ABExpTestGroupBSize = 0.6
+// ExpTestGroupBSize controls the size of the test group.
+var ExpTestGroupBSize = 0.6
+
+var BanditHoldoutSize = 0.1
 
 // GetABTestingService allows us to get an Experimento service using A/B testing
-// that will be useful for testing.
-func GetABTestingService() (*service.ExperimentoService, error) {
-	return GetABTestingServiceN(0)
+// that will be useful for testing. GetABTestingService(0) has just the simple
+// configuration, without any other random experiment configured.
+func GetABTestingService(n int) (*service.ExperimentoService, error) {
+	return GetTestingService(assigners.NewABTesting(), n)
 }
 
-// GetABTestingServiceN allows us to get an Experimento service using A/B testing
-// that will be useful for testing. This service will have n + 1 experiments
-// associated with it.
-func GetABTestingServiceN(n int) (*service.ExperimentoService, error) {
+func GetBanditTestingService(n int) (*service.ExperimentoService, error) {
+	agg := aggregators.NewSingleMetricMemoryAggregator()
+	bandit, err := assigners.NewProbBandit(agg, BanditHoldoutSize)
+	if err != nil {
+		return nil, err
+	}
+	return GetTestingService(bandit, n)
+}
+
+func GetTestingService(assigner interfaces.Assigner, n int) (*service.ExperimentoService, error) {
 	repository := repositories.NewMemoryRepository()
 	store := stores.NewMemoryStore()
-	assigner := assigners.NewABTesting()
 
 	// Set a specific random seed.
 	info := experiment.Info{
 		ID:        "experiment",
-		SeedValue: ABExpTestSeed,
-		Size:      ABExpTestSize,
+		SeedValue: ExpTestSeed,
+		Size:      ExpTestSize,
 	}
 	varsInfo := map[string]experiment.VariableOptions{
 		"var": []string{"a", "b"},
 	}
 	groups := map[string]experiment.GroupDescription{
 		"control": experiment.GroupDescription{
-			StartSize: ABExpTestGroupASize,
+			StartSize: ExpTestGroupASize,
 			Variables: experiment.Variables{
 				"var": "a",
 			},
 		},
 		"test": experiment.GroupDescription{
-			StartSize: ABExpTestGroupBSize,
+			StartSize: ExpTestGroupBSize,
 			Variables: experiment.Variables{
 				"var": "b",
 			},
