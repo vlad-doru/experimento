@@ -15,6 +15,7 @@ type Repository interface {
 	// We recommend storing all the experiments locally, as this function is going to be
 	// called for every query of the experimento system, and subscribing to changes
 	// to the repository made by other parties.
+	// This method should be thread safe.
 	GetExperiments() (map[string]experiment.Description, error)
 }
 
@@ -22,7 +23,9 @@ type Repository interface {
 // group of an entity, given an experiment id.
 // We recommend using a high performance, in-memory, key-value database.
 type Store interface {
+	// This method should be thread safe
 	SetExperimentGroup(entityID, expID, group string) error
+	// This method should be thread safe
 	GetExperimentGroup(entityID, expID string) (string, error)
 }
 
@@ -40,6 +43,7 @@ func (e NoGroupSet) Error() string {
 // Assigner describes an interface for deciding which group a specific entity
 // will be mapped to.
 type Assigner interface {
+	// This method should be thread safe.
 	AssignGroup(entityID string, desc experiment.Description) (string, error)
 }
 
@@ -53,5 +57,7 @@ type Assigner interface {
 // but is useful as an interface, since a multi arm bandit approach for ids
 // assignation may query an aggregator for partial results.
 type Aggregator interface {
-	Efficiency(expID string) (float64, error)
+	// This method should be thread safe.
+	// Maps group_id -> efficiency
+	Efficiency(expID string) (map[string]float64, error)
 }
