@@ -55,6 +55,7 @@ func (assigner *ProbBandit) AssignGroup(entityID string, desc experiment.Descrip
 	if totalEfficiency == 0 {
 		return assigner.abChoice(r, desc)
 	}
+	// TODO: Count for how many we use the bandit methdod.
 	s := 0.0
 	for _, groupID := range desc.SortedGroupIDs {
 		efficiency := efficiencies[groupID]
