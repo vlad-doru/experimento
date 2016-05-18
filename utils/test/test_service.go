@@ -59,11 +59,11 @@ func GetDefaultExperimentDescription() (experiment.Description, error) {
 	return experiment.NewDescription(info, varsInfo, groups, whitelist)
 }
 
-// GetABTestingService allows us to get an Experimento service using A/B testing
-// that will be useful for testing. GetABTestingService(0) has just the simple
+// GetBasicABService allows us to get an Experimento service using A/B testing
+// that will be useful for testing. GetBasicABService(0) has just the simple
 // configuration, without any other random experiment configured.
-func GetABTestingService(n int) (*service.ExperimentoService, error) {
-	return GetTestingService(assigners.NewABTesting(), n)
+func GetBasicABService(n int) (*service.ExperimentoService, error) {
+	return GetTestingService(assigners.NewBasicAB(), n)
 }
 
 // GetBanditTestingService allows us to get an Experimento service using

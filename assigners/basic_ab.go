@@ -7,17 +7,17 @@ import (
 	"fmt"
 )
 
-// ABTesting assigner, used to distributed entity id's evenly, according to
+// BasicAB assigner, used to distributed entity id's evenly, according to
 // each group's description.
-type ABTesting struct{}
+type BasicAB struct{}
 
-// NewABTesting returns a new ABTesting assigner.
-func NewABTesting() *ABTesting {
-	return &ABTesting{}
+// NewBasicAB returns a new BasicAB assigner.
+func NewBasicAB() *BasicAB {
+	return &BasicAB{}
 }
 
 // AssignGroup returns the group id that will be assigned to a new entity id.
-func (assigner *ABTesting) AssignGroup(entityID string, desc experiment.Description) (string, error) {
+func (assigner *BasicAB) AssignGroup(entityID string, desc experiment.Description) (string, error) {
 	r := hashing.HashFloat(entityID, desc.Seed)
 
 	// We use the previously generated random number to decide which group we map this id to.

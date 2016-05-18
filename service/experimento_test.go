@@ -12,8 +12,8 @@ import (
 
 // TestGetAllVariablesBasic tests a simple usecase which should always yield the
 // same value for an AB testing service.
-func TestABTestingBasic(t *testing.T) {
-	s, err := test.GetABTestingService(0)
+func TestBasicABBasic(t *testing.T) {
+	s, err := test.GetBasicABService(0)
 	assert.Nil(t, err, "Error while getting the experimento service")
 
 	v, err := s.GetAllVariables("doru")
@@ -25,9 +25,9 @@ func TestABTestingBasic(t *testing.T) {
 	assert.Equal(t, "b", v["experiment"]["var"], "Wrong variable choice")
 }
 
-func TestABTestingDeterminism(t *testing.T) {
+func TestBasicABDeterminism(t *testing.T) {
 	test.SetSeed(1) // set the seed so that we can easily replicate results
-	s, err := test.GetABTestingService(0)
+	s, err := test.GetBasicABService(0)
 	assert.Nil(t, err, "Error while getting the experimento service")
 	initialGroup := map[string]string{}
 	// Generate 1000 random string and check that
@@ -57,9 +57,9 @@ func TestABTestingDeterminism(t *testing.T) {
 	}
 }
 
-func TestABTestingDistribution(t *testing.T) {
+func TestBasicABDistribution(t *testing.T) {
 	test.SetSeed(1) // set the seed so that we can easily replicate results
-	s, err := test.GetABTestingService(0)
+	s, err := test.GetBasicABService(0)
 	assert.Nil(t, err, "Error while getting the experimento service")
 	groupASize := test.ExpTestGroupASize
 	groupBSize := test.ExpTestGroupBSize
@@ -97,11 +97,11 @@ func TestABTestingDistribution(t *testing.T) {
 	assert.InEpsilon(t, 1-expSize, noGroupRatio, 0.01, "Invalid ratio difference for non participating group")
 }
 
-func BenchmarkABTesting(b *testing.B) {
+func BenchmarkBasicAB(b *testing.B) {
 	// Stop the benchmark timer.
 	b.StopTimer()
-	test.SetSeed(1)                         // set the seed so that we can easily replicate results
-	s, err := test.GetABTestingService(100) // get a service with 100 experiments
+	test.SetSeed(1)                       // set the seed so that we can easily replicate results
+	s, err := test.GetBasicABService(100) // get a service with 100 experiments
 	if err != nil {
 		b.Logf("Error while creating the service: %s", err)
 		b.FailNow()
