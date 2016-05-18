@@ -13,19 +13,51 @@ import (
 )
 
 // ExpTestSeed allows to change the seed of the test experiment.
-var ExpTestSeed = "experimento"
+const ExpTestSeed = "experimento"
 
 // ExpTestSize allows to change the size of the test experiment.
-var ExpTestSize = 0.5
+const ExpTestSize = 0.5
 
 // ExpTestGroupASize controls the size of the control group.
-var ExpTestGroupASize = 0.4
+const ExpTestGroupASize = 0.4
 
 // ExpTestGroupBSize controls the size of the test group.
-var ExpTestGroupBSize = 0.6
+const ExpTestGroupBSize = 0.6
 
 // BanditHoldoutSize controls the holdout size in multiarm bandit method.
-var BanditHoldoutSize = 0.1
+const BanditHoldoutSize = 0.1
+
+var varsInfo = map[string]experiment.VariableOptions{
+	"var": []string{"a", "b"},
+}
+
+// GetDefaultExperimentDescription returns a classical experiment setup,
+// decribing a control group and a test group.
+func GetDefaultExperimentDescription() (experiment.Description, error) {
+	// Set a specific random seed.
+	info := experiment.Info{
+		ID:        "experiment",
+		SeedValue: ExpTestSeed,
+		Size:      ExpTestSize,
+	}
+	groups := map[string]experiment.GroupDescription{
+		"control": experiment.GroupDescription{
+			StartSize: ExpTestGroupASize,
+			Variables: experiment.Variables{
+				"var": "a",
+			},
+		},
+		"test": experiment.GroupDescription{
+			StartSize: ExpTestGroupBSize,
+			Variables: experiment.Variables{
+				"var": "b",
+			},
+		},
+	}
+	whitelist := map[string]string{}
+	// Create a new description with the info described above.
+	return experiment.NewDescription(info, varsInfo, groups, whitelist)
+}
 
 // GetABTestingService allows us to get an Experimento service using A/B testing
 // that will be useful for testing. GetABTestingService(0) has just the simple
@@ -49,32 +81,8 @@ func GetBanditTestingService(agg interfaces.Aggregator, n int) (*service.Experim
 func GetTestingService(assigner interfaces.Assigner, n int) (*service.ExperimentoService, error) {
 	repository := repositories.NewMemoryRepository()
 	store := stores.NewMemoryStore()
+	desc, err := GetDefaultExperimentDescription()
 
-	// Set a specific random seed.
-	info := experiment.Info{
-		ID:        "experiment",
-		SeedValue: ExpTestSeed,
-		Size:      ExpTestSize,
-	}
-	varsInfo := map[string]experiment.VariableOptions{
-		"var": []string{"a", "b"},
-	}
-	groups := map[string]experiment.GroupDescription{
-		"control": experiment.GroupDescription{
-			StartSize: ExpTestGroupASize,
-			Variables: experiment.Variables{
-				"var": "a",
-			},
-		},
-		"test": experiment.GroupDescription{
-			StartSize: ExpTestGroupBSize,
-			Variables: experiment.Variables{
-				"var": "b",
-			},
-		},
-	}
-	// Create a new description with the info described above.
-	desc, err := experiment.NewDescription(info, varsInfo, groups, nil)
 	if err != nil {
 		return nil, err
 	}
