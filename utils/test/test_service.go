@@ -13,19 +13,19 @@ import (
 )
 
 // ExpTestSeed allows to change the seed of the test experiment.
-const ExpTestSeed = "experimento"
+var ExpTestSeed = "experimento"
 
 // ExpTestSize allows to change the size of the test experiment.
-const ExpTestSize = 0.5
+var ExpTestSize = 0.5
 
 // ExpControlGroupSize controls the size of the control group.
-const ExpControlGroupSize = 0.4
+var ExpControlGroupSize = 0.4
 
 // ExpTestGroupSize controls the size of the test group.
-const ExpTestGroupSize = 0.6
+var ExpTestGroupSize = 0.6
 
 // BanditHoldoutSize controls the holdout size in multiarm bandit method.
-const BanditHoldoutSize = 0.1
+var BanditHoldoutSize = 0.1
 
 var varsInfo = map[string]experiment.VariableOptions{
 	"var": []string{"a", "b"},

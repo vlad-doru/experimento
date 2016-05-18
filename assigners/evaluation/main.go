@@ -33,6 +33,8 @@ func main() {
 		"control": 0.40,
 		"test":    0.20,
 	}
+	test.ExpControlGroupSize = 0.5
+	test.ExpTestGroupSize = 0.5
 	fmt.Println("Batch, Algorithm, Group, Mean, Samples, Variance")
 	// Start the simulation.
 	for i := 0; i < batches; i++ {
@@ -52,9 +54,9 @@ func main() {
 		// After each batch we log the performance.
 		for _, group := range []string{"control", "test"} {
 			r := abAgg.GetExpResults(experimentID)[group]
-			fmt.Printf("%d, %s, %s, %f, %d, %f\n", i, "ab", group, r.Mean, int(r.Samples), r.Variance)
+			fmt.Printf("%d, %s, %s, %f, %d, %f\n", i, "Basic AB Testing", group, r.Mean, int(r.Samples), r.Variance)
 			r = banditAgg.GetExpResults(experimentID)[group]
-			fmt.Printf("%d, %s, %s, %f, %d, %f\n", i, "bandit", group, r.Mean, int(r.Samples), r.Variance)
+			fmt.Printf("%d, %s, %s, %f, %d, %f\n", i, "Probablistic Multiarm Bandit", group, r.Mean, int(r.Samples), r.Variance)
 		}
 	}
 }
