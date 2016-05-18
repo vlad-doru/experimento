@@ -69,4 +69,28 @@ func (agg *SingleMetricMemoryAggregator) Efficiency(expID string) (map[string]fl
 	return result, nil
 }
 
-// TODO: Implement a method for getting the confidence intervals and use that in the simulation.
+// Results encapsulates data about a group in an experiment
+type Results struct {
+	Mean    float64
+	SD      float64
+	Samples float64
+}
+
+// GetExpResults returns a mapping from a group id to a results structure
+// for the selected experiment.
+func (agg *SingleMetricMemoryAggregator) GetExpResults(expID string) map[string]Results {
+	r := map[string]Results{}
+	for groupID, mean := range agg.mean[expID] {
+		samples := agg.count[expID][groupID]
+		sd := 0.0
+		if samples > 1 {
+			sd = agg.m2[expID][groupID] / (samples - 1)
+		}
+		r[groupID] = Results{
+			Mean:    mean,
+			SD:      sd,
+			Samples: samples,
+		}
+	}
+	return r
+}

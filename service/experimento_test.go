@@ -195,4 +195,10 @@ func TestProbMultiArmBanditDistribution(t *testing.T) {
 	assert.InEpsilon(t, expectedGroupARatio, groupARatio, 0.01, "Invalid ratio difference for control group")
 	assert.InEpsilon(t, expectedGroupBRatio, groupBRatio, 0.01, "Invalid ratio difference for test group")
 	assert.InEpsilon(t, 1-expSize, noGroupRatio, 0.01, "Invalid ratio difference for non participating group")
+
+	// Check the metric mean.
+	r := agg.GetExpResults("experiment")
+	assert.InEpsilon(t, groupAMetricMean, r["control"].Mean, 0.01, "Incorrect metric for control group.")
+	assert.InEpsilon(t, groupBMetricMean, r["test"].Mean, 0.01, "Incorrect metric for test group.")
+
 }
