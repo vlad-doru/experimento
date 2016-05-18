@@ -10,9 +10,7 @@ import (
 	"testing"
 )
 
-// TestGetAllVariablesBasic tests a simple usecase which should always yield the
-// same value for an AB testing service.
-func TestBasicABBasic(t *testing.T) {
+func TestBasicABBasicExample(t *testing.T) {
 	s, err := test.GetBasicABService(0)
 	assert.Nil(t, err, "Error while getting the experimento service")
 
@@ -25,79 +23,30 @@ func TestBasicABBasic(t *testing.T) {
 	assert.Equal(t, "b", v["experiment"]["var"], "Wrong variable choice")
 }
 
-func TestBasicABDeterminism(t *testing.T) {
+func TestBasicABIntegration(t *testing.T) {
 	test.SetSeed(1) // set the seed so that we can easily replicate results
 	s, err := test.GetBasicABService(0)
 	assert.Nil(t, err, "Error while getting the experimento service")
-	initialGroup := map[string]string{}
-	// Generate 1000 random string and check that
-	// if we call the function 1000 times for each we get the same group.
-	for i := 0; i < 100; i++ {
-		randID := test.RandString(6, 10)
-		v, err := s.GetAllVariables(randID)
-		assert.Nil(t, err, "Could not get all the variables: %v", err)
-		group := v["experiment"]["group"]
-		if group == "" {
-			// Not participating
-			continue
-		}
-		assert.True(t,
-			group == "control" || group == "test",
-			"Invalid group variable value %v", group)
-		initialGroup[randID] = group
-	}
-	// Check for determinism.
-	for i := 0; i < 1000; i++ {
-		for randID, expectedGroup := range initialGroup {
-			v, err := s.GetAllVariables(randID)
-			assert.Nil(t, err, "Could not get all the variables: %v", err)
-			group := v["experiment"]["group"]
-			assert.Equal(t, expectedGroup, group, "Non deterministic behaviour of A/B testing for id", randID)
-		}
-	}
-}
-
-func TestBasicABDistribution(t *testing.T) {
-	test.SetSeed(1) // set the seed so that we can easily replicate results
-	s, err := test.GetBasicABService(0)
-	assert.Nil(t, err, "Error while getting the experimento service")
-	groupASize := test.ExpControlGroupSize
-	groupBSize := test.ExpTestGroupSize
 	expSize := test.ExpTestSize
 	// Generate 100K random strings and call the GetAllVariables method.
 	// Count the result from each group.
-	groupACount := 0.0
-	groupBCount := 0.0
-	noGroupCount := 0.0
+	count := map[string]float64{}
 	sampleSize := 100000
 	for i := 0; i < sampleSize; i++ {
 		randID := test.RandString(6, 10)
 		v, err := s.GetAllVariables(randID)
 		assert.Nil(t, err, "Could not get all the variables: %v", err)
-		group := v["experiment"]["group"]
-		switch group {
-		case "control":
-			groupACount++
-			break
-		case "test":
-			groupBCount++
-			break
-		case "":
-			noGroupCount++
-			break
-		default:
-			assert.Fail(t, "Invalid group %s", group)
-		}
+		count[v["experiment"]["group"]]++
 	}
-	groupARatio := groupACount / float64(expSize*float64(sampleSize))
-	groupBRatio := groupBCount / float64(expSize*float64(sampleSize))
-	noGroupRatio := noGroupCount / float64(sampleSize)
-	assert.InEpsilon(t, groupASize, groupARatio, 0.01, "Invalid ratio difference for control group")
-	assert.InEpsilon(t, groupBSize, groupBRatio, 0.01, "Invalid ratio difference for test group")
+	controlRatio := count["control"] / float64(expSize*float64(sampleSize))
+	testRatio := count["test"] / float64(expSize*float64(sampleSize))
+	noGroupRatio := count[""] / float64(sampleSize)
+	assert.InEpsilon(t, test.ExpControlGroupSize, controlRatio, 0.01, "Invalid ratio difference for control group")
+	assert.InEpsilon(t, test.ExpTestGroupSize, testRatio, 0.01, "Invalid ratio difference for test group")
 	assert.InEpsilon(t, 1-expSize, noGroupRatio, 0.01, "Invalid ratio difference for non participating group")
 }
 
-func BenchmarkBasicAB(b *testing.B) {
+func BenchmarkBasicABIntegration(b *testing.B) {
 	// Stop the benchmark timer.
 	b.StopTimer()
 	test.SetSeed(1)                       // set the seed so that we can easily replicate results
@@ -133,7 +82,7 @@ func BenchmarkBasicAB(b *testing.B) {
 	}
 }
 
-func TestProbMultiArmBanditDistribution(t *testing.T) {
+func TestProbBanditIntegration(t *testing.T) {
 	test.SetSeed(1) // set the seed so that we can easily replicate results
 	agg := aggregators.NewSingleMetricMemoryAggregator()
 	s, err := test.GetBanditTestingService(agg, 0)

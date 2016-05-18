@@ -8,6 +8,28 @@ import (
 	"testing"
 )
 
+func TestBasicABDeterminism(t *testing.T) {
+	a := assigners.NewBasicAB()
+	desc, err := test.GetDefaultExperimentDescription()
+	assert.NotNil(t, a)
+	assert.Nil(t, err)
+	sampleSize := 1000
+	checkSize := 1000
+	for i := 0; i < sampleSize; i++ {
+		randID := test.RandString(6, 10)
+		expected, err := a.AssignGroup(randID, desc)
+		assert.Nil(t, err)
+		for j := 0; j < checkSize; j++ {
+			actual, err := a.AssignGroup(randID, desc)
+			assert.Nil(t, err)
+			assert.Equal(t, expected, actual)
+			if (actual != expected) || (err != nil) {
+				assert.FailNow(t, "BasicAB assigner behaviour is non deterministic.")
+			}
+		}
+	}
+}
+
 func TestBasicABDistribution(t *testing.T) {
 	a := assigners.NewBasicAB()
 	desc, err := test.GetDefaultExperimentDescription()
