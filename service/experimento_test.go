@@ -61,8 +61,8 @@ func TestBasicABDistribution(t *testing.T) {
 	test.SetSeed(1) // set the seed so that we can easily replicate results
 	s, err := test.GetBasicABService(0)
 	assert.Nil(t, err, "Error while getting the experimento service")
-	groupASize := test.ExpTestGroupASize
-	groupBSize := test.ExpTestGroupBSize
+	groupASize := test.ExpControlGroupSize
+	groupBSize := test.ExpTestGroupSize
 	expSize := test.ExpTestSize
 	// Generate 100K random strings and call the GetAllVariables method.
 	// Count the result from each group.
@@ -138,8 +138,8 @@ func TestProbMultiArmBanditDistribution(t *testing.T) {
 	agg := aggregators.NewSingleMetricMemoryAggregator()
 	s, err := test.GetBanditTestingService(agg, 0)
 	assert.Nil(t, err, "Error while getting the experimento service")
-	groupASize := test.ExpTestGroupASize
-	groupBSize := test.ExpTestGroupBSize
+	groupASize := test.ExpControlGroupSize
+	groupBSize := test.ExpTestGroupSize
 	expSize := test.ExpTestSize
 	// Generate 100K random strings and call the GetAllVariables method.
 	// Count the result from each group.

@@ -18,11 +18,11 @@ const ExpTestSeed = "experimento"
 // ExpTestSize allows to change the size of the test experiment.
 const ExpTestSize = 0.5
 
-// ExpTestGroupASize controls the size of the control group.
-const ExpTestGroupASize = 0.4
+// ExpControlGroupSize controls the size of the control group.
+const ExpControlGroupSize = 0.4
 
-// ExpTestGroupBSize controls the size of the test group.
-const ExpTestGroupBSize = 0.6
+// ExpTestGroupSize controls the size of the test group.
+const ExpTestGroupSize = 0.6
 
 // BanditHoldoutSize controls the holdout size in multiarm bandit method.
 const BanditHoldoutSize = 0.1
@@ -42,13 +42,13 @@ func GetDefaultExperimentDescription() (experiment.Description, error) {
 	}
 	groups := map[string]experiment.GroupDescription{
 		"control": experiment.GroupDescription{
-			StartSize: ExpTestGroupASize,
+			StartSize: ExpControlGroupSize,
 			Variables: experiment.Variables{
 				"var": "a",
 			},
 		},
 		"test": experiment.GroupDescription{
-			StartSize: ExpTestGroupBSize,
+			StartSize: ExpTestGroupSize,
 			Variables: experiment.Variables{
 				"var": "b",
 			},
