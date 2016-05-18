@@ -42,7 +42,7 @@ func (agg *SingleMetricMemoryAggregator) AddMetric(expID, groupID string, value 
 	if ok == false {
 		agg.mean[expID] = map[string]float64{groupID: value}
 		agg.count[expID] = map[string]float64{groupID: 1}
-		agg.m2[expID] = map[string]float64{groupID: 0}
+		agg.m2[expID] = map[string]float64{groupID: value * value}
 		return
 	}
 	n := agg.count[expID][groupID]
@@ -71,9 +71,9 @@ func (agg *SingleMetricMemoryAggregator) Efficiency(expID string) (map[string]fl
 
 // Results encapsulates data about a group in an experiment
 type Results struct {
-	Mean    float64
-	SD      float64
-	Samples float64
+	Mean     float64
+	Variance float64
+	Samples  float64
 }
 
 // GetExpResults returns a mapping from a group id to a results structure
@@ -82,14 +82,14 @@ func (agg *SingleMetricMemoryAggregator) GetExpResults(expID string) map[string]
 	r := map[string]Results{}
 	for groupID, mean := range agg.mean[expID] {
 		samples := agg.count[expID][groupID]
-		sd := 0.0
+		variance := 0.0
 		if samples > 1 {
-			sd = agg.m2[expID][groupID] / (samples - 1)
+			variance = agg.m2[expID][groupID] / (samples - 1)
 		}
 		r[groupID] = Results{
-			Mean:    mean,
-			SD:      sd,
-			Samples: samples,
+			Mean:     mean,
+			Variance: variance,
+			Samples:  samples,
 		}
 	}
 	return r
