@@ -11,6 +11,14 @@
 			"Rev": "2df174808ee097f90d259e432cc04442cf60be21"
 		},
 		{
+			"ImportPath": "github.com/dropbox/godropbox/container/concurrent",
+			"Rev": "3c8a9189a8748951b62c6a48c072448b2fd4cac7"
+		},
+		{
+			"ImportPath": "github.com/dropbox/godropbox/container/lrucache",
+			"Rev": "3c8a9189a8748951b62c6a48c072448b2fd4cac7"
+		},
+		{
 			"ImportPath": "github.com/pmezard/go-difflib/difflib",
 			"Rev": "792786c7400a136282c1664665ae0a8db921c6c2"
 		},
