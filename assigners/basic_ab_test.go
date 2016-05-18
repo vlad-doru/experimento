@@ -9,6 +9,7 @@ import (
 )
 
 func TestBasicABDeterminism(t *testing.T) {
+	test.SetSeed(1)
 	a := assigners.NewBasicAB()
 	desc, err := test.GetDefaultExperimentDescription()
 	assert.NotNil(t, a)
@@ -31,6 +32,7 @@ func TestBasicABDeterminism(t *testing.T) {
 }
 
 func TestBasicABDistribution(t *testing.T) {
+	test.SetSeed(1)
 	a := assigners.NewBasicAB()
 	desc, err := test.GetDefaultExperimentDescription()
 	assert.NotNil(t, a)
@@ -46,4 +48,5 @@ func TestBasicABDistribution(t *testing.T) {
 	// Check if the distribution is correct.
 	assert.InEpsilon(t, test.ExpControlGroupSize, float64(count["control"])/float64(sampleSize), 0.01)
 	assert.InEpsilon(t, test.ExpTestGroupSize, float64(count["test"])/float64(sampleSize), 0.01)
+	assert.Equal(t, count["control"]+count["test"], sampleSize, "There were other groups returned, other than test and control")
 }
