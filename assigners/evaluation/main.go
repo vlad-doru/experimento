@@ -13,6 +13,8 @@ import (
 const experimentID = "experiment"
 
 func main() {
+	test.ExpControlGroupSize = 0.5
+	test.ExpTestGroupSize = 0.5
 	desc, err := test.GetDefaultExperimentDescription()
 	if err != nil {
 		log.Fatalf("Unexpected error: %v", err)
@@ -30,11 +32,9 @@ func main() {
 	batches := 1000
 	batchSize := 100
 	metricMeans := map[string]float64{
-		"control": 0.40,
+		"control": 0.50,
 		"test":    0.20,
 	}
-	test.ExpControlGroupSize = 0.5
-	test.ExpTestGroupSize = 0.5
 	fmt.Println("Batch, Algorithm, Group, Mean, Samples, Variance")
 	// Start the simulation.
 	for i := 0; i < batches; i++ {
