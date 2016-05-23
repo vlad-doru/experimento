@@ -14,7 +14,7 @@ func TestBasicABBasicExample(t *testing.T) {
 	s, err := test.GetBasicABService(0)
 	assert.Nil(t, err, "Error while getting the experimento service")
 
-	v, err := s.GetAllVariables("doru")
+	v, err := s.GetAllVariables("vlad")
 
 	assert.Nil(t, err, "Error while getting all variables %v", err)
 	assert.NotNil(t, v, "Empty all variables map")
