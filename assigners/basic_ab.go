@@ -1,7 +1,7 @@
 package assigners
 
 import (
-	"github.com/vlad-doru/experimento/experiment"
+	"github.com/vlad-doru/experimento/data"
 	"github.com/vlad-doru/experimento/utils/hashing"
 
 	"fmt"
@@ -17,14 +17,14 @@ func NewBasicAB() *BasicAB {
 }
 
 // AssignGroup returns the group id that will be assigned to a new entity id.
-func (assigner *BasicAB) AssignGroup(entityID string, desc experiment.Description) (string, error) {
-	r := hashing.HashFloat(entityID, desc.Seed)
+func (assigner *BasicAB) AssignGroup(entityID string, exp data.InternalExperiment) (string, error) {
+	r := hashing.HashFloat(entityID, exp.Seed)
 
 	// We use the previously generated random number to decide which group we map this id to.
 	s := 0.0
-	for _, groupID := range desc.SortedGroupIDs {
-		group := desc.Groups[groupID]
-		s += group.StartSize
+	for _, groupID := range exp.SortedGroupIDs {
+		group := exp.GroupsInfo[groupID]
+		s += group.InitialSize
 		if r <= s {
 			return groupID, nil
 		}

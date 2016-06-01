@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/vlad-doru/experimento/experiment"
+	"github.com/vlad-doru/experimento/data"
 	"github.com/vlad-doru/experimento/interfaces"
 	"github.com/vlad-doru/experimento/utils/hashing"
 
@@ -49,12 +49,12 @@ func (service *ExperimentoService) GetAllVariables(entityID string) (Variables, 
 	c := make(chan *expVar, len(experiments)) // buffered so we don't wait on write
 	validExperiments := 0
 	entityIDHash := hashing.Hash(entityID)
-	for id, desc := range experiments {
+	for id, exp := range experiments {
 		// First we check if the entity is whitelisted.
-		_, isWhitelisted := desc.Whitelist[entityID]
+		_, isWhitelisted := exp.Whitelist[entityID]
 		if isWhitelisted == false {
 			// Check if this entity's id falls in the experiment size.
-			if hashing.MapUint64ToFloat(entityIDHash, desc.InternalSeed) >= desc.Size {
+			if hashing.MapUint64ToFloat(entityIDHash, exp.InternalSeed) >= exp.Info.Size {
 				// This entity does not participate
 				continue
 			}
@@ -62,11 +62,11 @@ func (service *ExperimentoService) GetAllVariables(entityID string) (Variables, 
 		// If it is whitelisted or in the experiment we go on and get the Variables
 		// in parallel.
 		validExperiments++
-		go func(id string, desc experiment.Description) {
+		go func(id string, desc data.InternalExperiment) {
 			// Get the variable then send it through the channel.
 			vars, err := service.getVariables(entityID, desc)
 			c <- &expVar{id, vars, err}
-		}(id, desc)
+		}(id, exp)
 	}
 
 	result := Variables{}
@@ -82,10 +82,10 @@ func (service *ExperimentoService) GetAllVariables(entityID string) (Variables, 
 	return result, nil
 }
 
-func (service *ExperimentoService) getVariables(entityID string, exp experiment.Description) (map[string]string, error) {
+func (service *ExperimentoService) getVariables(entityID string, exp data.InternalExperiment) (map[string]string, error) {
 	var groupID string
 	var err error
-	groupID, err = service.store.GetExperimentGroup(entityID, exp.ID)
+	groupID, err = service.store.GetExperimentGroup(entityID, exp.Info.Id)
 	if err != nil {
 		// If there was no group set for this id we do not return with an error.
 		switch err.(type) {
@@ -102,7 +102,7 @@ func (service *ExperimentoService) getVariables(entityID string, exp experiment.
 				return nil, err
 			}
 			// Store the group.
-			err = service.store.SetExperimentGroup(entityID, exp.ID, groupID)
+			err = service.store.SetExperimentGroup(entityID, exp.Info.Id, groupID)
 			if err != nil {
 				return nil, err
 			}
@@ -112,7 +112,7 @@ func (service *ExperimentoService) getVariables(entityID string, exp experiment.
 		}
 	}
 
-	group, ok := exp.Groups[groupID]
+	group, ok := exp.GroupsInfo[groupID]
 	if ok == false {
 		return nil, fmt.Errorf("Group with id %s does not exist!", groupID)
 	}

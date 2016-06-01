@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	"github.com/vlad-doru/experimento/experiment"
+	"github.com/vlad-doru/experimento/data"
 
 	"fmt"
 )
@@ -9,31 +9,31 @@ import (
 // MemoryRepository is a local, in-memory experiment repository.
 // It is implemented mainly for testing purposes.
 type MemoryRepository struct {
-	experiments map[string]experiment.Description
+	experiments map[string]data.InternalExperiment
 }
 
 // NewMemoryRepository returns a new MemoryRepository object.
 func NewMemoryRepository() *MemoryRepository {
-	experiments := make(map[string]experiment.Description)
+	experiments := make(map[string]data.InternalExperiment)
 	return &MemoryRepository{experiments}
 }
 
 // CreateExperiment saves an experiment with the given description in the repository.
-func (repository *MemoryRepository) CreateExperiment(experiment experiment.Description) error {
-	_, ok := repository.experiments[experiment.ID]
+func (repository *MemoryRepository) CreateExperiment(exp data.InternalExperiment) error {
+	_, ok := repository.experiments[exp.Info.Id]
 	if ok == true {
-		return fmt.Errorf("There is already an experiment with the given id: %s", experiment.ID)
+		return fmt.Errorf("There is already an experiment with the given id: %s", exp.Info.Id)
 	}
-	repository.experiments[experiment.ID] = experiment
+	repository.experiments[exp.Info.Id] = exp
 	return nil
 }
 
 // GetExperiment returns the experiment description of the experiment with the
 // specified experiment id.
-func (repository *MemoryRepository) GetExperiment(expID string) (experiment.Description, error) {
+func (repository *MemoryRepository) GetExperiment(expID string) (data.InternalExperiment, error) {
 	exp, ok := repository.experiments[expID]
 	if ok == false {
-		return experiment.Description{}, fmt.Errorf("The experiment with id %s does not exist.", expID)
+		return data.InternalExperiment{}, fmt.Errorf("The experiment with id %s does not exist.", expID)
 	}
 	return exp, nil
 }
@@ -44,6 +44,6 @@ func (repository *MemoryRepository) DestroyExperiment(expID string) {
 }
 
 // GetExperiments returns all the current experiments form the memory.
-func (repository *MemoryRepository) GetExperiments() (map[string]experiment.Description, error) {
+func (repository *MemoryRepository) GetExperiments() (map[string]data.InternalExperiment, error) {
 	return repository.experiments, nil
 }

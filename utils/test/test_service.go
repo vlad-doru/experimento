@@ -2,7 +2,7 @@ package test
 
 import (
 	"github.com/vlad-doru/experimento/assigners"
-	"github.com/vlad-doru/experimento/experiment"
+	"github.com/vlad-doru/experimento/data"
 	"github.com/vlad-doru/experimento/interfaces"
 	"github.com/vlad-doru/experimento/repositories"
 	"github.com/vlad-doru/experimento/stores"
@@ -27,36 +27,38 @@ var ExpTestGroupSize = 0.6
 // BanditHoldoutSize controls the holdout size in multiarm bandit method.
 var BanditHoldoutSize = 0.1
 
-var varsInfo = map[string]experiment.VariableOptions{
-	"var": []string{"a", "b"},
+var varsInfo = map[string]*data.VariableInfo{
+	"var": &data.VariableInfo{
+		Options: []string{"a", "b"},
+	},
 }
 
 // GetDefaultExperimentDescription returns a classical experiment setup,
 // decribing a control group and a test group.
-func GetDefaultExperimentDescription() (experiment.Description, error) {
+func GetDefaultExperimentDescription() (data.InternalExperiment, error) {
 	// Set a specific random seed.
-	info := experiment.Info{
-		ID:        "experiment",
+	info := &data.ExperimentInfo{
+		Id:        "experiment",
 		SeedValue: ExpTestSeed,
 		Size:      ExpTestSize,
 	}
-	groups := map[string]experiment.GroupDescription{
-		"control": experiment.GroupDescription{
-			StartSize: ExpControlGroupSize,
-			Variables: experiment.Variables{
+	groups := map[string]*data.GroupInfo{
+		"control": &data.GroupInfo{
+			InitialSize: ExpControlGroupSize,
+			Variables: map[string]string{
 				"var": "a",
 			},
 		},
-		"test": experiment.GroupDescription{
-			StartSize: ExpTestGroupSize,
-			Variables: experiment.Variables{
+		"test": &data.GroupInfo{
+			InitialSize: ExpTestGroupSize,
+			Variables: map[string]string{
 				"var": "b",
 			},
 		},
 	}
 	whitelist := map[string]string{}
 	// Create a new description with the info described above.
-	return experiment.NewDescription(info, varsInfo, groups, whitelist)
+	return data.NewExperiment(info, varsInfo, groups, whitelist)
 }
 
 // GetBasicABService allows us to get an Experimento service using A/B testing
@@ -91,28 +93,28 @@ func GetTestingService(assigner interfaces.Assigner, n int) (*service.Experiment
 		return nil, err
 	}
 	for i := 0; i < n; i++ {
-		randInfo := experiment.Info{
-			ID:        RandStringN(20),
+		randInfo := &data.ExperimentInfo{
+			Id:        RandStringN(20),
 			SeedValue: RandStringN(20),
 			Size:      rand.Float64(),
 		}
-		randInfo.ID = RandStringN(20)
+		// randInfo.Id = RandStringN(20)
 		controlSize := rand.Float64()
-		randGroups := map[string]experiment.GroupDescription{
-			"control": experiment.GroupDescription{
-				StartSize: controlSize,
-				Variables: experiment.Variables{
+		randGroups := map[string]*data.GroupInfo{
+			"control": &data.GroupInfo{
+				InitialSize: controlSize,
+				Variables: map[string]string{
 					"var": "a",
 				},
 			},
-			"test": experiment.GroupDescription{
-				StartSize: 1 - controlSize,
-				Variables: experiment.Variables{
+			"test": &data.GroupInfo{
+				InitialSize: 1 - controlSize,
+				Variables: map[string]string{
 					"var": "b",
 				},
 			},
 		}
-		desc, err := experiment.NewDescription(randInfo, varsInfo, randGroups, nil)
+		desc, err := data.NewExperiment(randInfo, varsInfo, randGroups, nil)
 		if err != nil {
 			return nil, err
 		}
