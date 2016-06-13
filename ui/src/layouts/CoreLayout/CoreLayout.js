@@ -1,13 +1,21 @@
 import React from 'react'
 import Header from '../../components/Header'
 import classes from './CoreLayout.scss'
+import Paper from 'material-ui/Paper';
 import '../../styles/core.scss'
 
 export const CoreLayout = ({ children }) => (
-  <div className='container text-center'>
+  <div className='text-center' style={{height: '100%'}}>
     <Header />
-    <div className={classes.mainContainer}>
-      {children}
+    <div className="container" style={{height: '100%'}}>
+      <Paper rounded={true} style={{
+        paddingTop: 20,
+        height: "90%",
+      }}>
+      <div>
+        {children}
+      </div>
+      </Paper>
     </div>
   </div>
 )
