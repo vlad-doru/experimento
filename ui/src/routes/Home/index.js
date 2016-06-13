@@ -1,16 +1,18 @@
 import React from 'react'
 import RaisedButton from 'material-ui/RaisedButton';
 
-import DuckImage from './assets/Duck.jpg'
+import ExperimentoLogo from './assets/logo.jpg'
 
 class HomeView extends React.Component {
   render () {
     return (
       <div>
-        <h4>Welcome!</h4>
         <img
-          alt='This is a duck, because Redux!'
-          src={DuckImage} />
+          alt='Experiment Logo'
+          src={ExperimentoLogo}
+          style={{
+            maxWidth: 140,
+          }}/>
           <br/>
         <RaisedButton label="Default" />
       </div>
