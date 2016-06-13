@@ -12,7 +12,10 @@ export const CoreLayout = ({ children }) => (
         paddingTop: 20,
         height: "90%",
       }}>
-      <div>
+      <div style={{
+        marginTop: 50,
+      }}>
+        <hr style={{width: '90%', borderWidth: 2}}/>
         {children}
       </div>
       </Paper>
