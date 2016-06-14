@@ -8,11 +8,23 @@ export class ExperimentInfo extends React.Component {
 
     this._isValid = this._isValid.bind(this);
     this.state = {
-      id: props.id,
-      seed: props.seed,
-      size: props.size,
-      valid: this._isValid(props),
+      info: props.info || {
+        id: '',
+        size: 0.1,
+        seed: Math.random().toString(36).substring(7),
+      },
+      valid: false,
     };
+  }
+
+  componentDidMount() {
+    this.refs.id.focus();
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.info != nextProps.info) {
+      this.setState({info: nextProps.info})
+    }
   }
 
   _isValid(obj) {
@@ -28,30 +40,19 @@ export class ExperimentInfo extends React.Component {
     return true;
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.setState({
-      id: props.id,
-      seed: props.seed,
-      size: props.size,
-    });
-  }
-
-  componentDidMount() {
-    this.refs.id.focus();
-  }
-
   _updateState(key, value) {
-    let newState = {
-      ...this.state,
+    let newInfo = {
+      ...this.state.info,
       [key]: value,
     };
-    if (this.props.onChange) {
+    let newState = {
+        info: newInfo,
+        valid: this._isValid(newInfo),
+    }
+    if (this.props && this.props.onChange) {
       this.props.onChange(newState);
     }
-    this.setState({
-      ...newState,
-      valid: this._isValid(newState),
-    });
+    this.setState(newState);
   }
 
   render () {
@@ -62,7 +63,7 @@ export class ExperimentInfo extends React.Component {
             floatingLabelText="ID"
             floatingLabelFixed={true}
             fullWidth={true}
-            value={this.state.id}
+            value={this.state.info.id}
             onChange={(e, input) => this._updateState('id', input)}
           /><br/>
         <TextField
@@ -70,28 +71,21 @@ export class ExperimentInfo extends React.Component {
             floatingLabelFixed={true}
             fullWidth={true}
             disabled={true}
-            value={this.state.seed}
+            value={this.state.info.seed}
           /><br/>
         <TextField
-            floatingLabelText="Dimensiunea Experimentului"
+            floatingLabelText="Size"
             floatingLabelFixed={true}
             fullWidth={true}
-            value={this.state.size}
+            value={this.state.info.size}
           /><br/>
         <Slider
-            value={this.state.size}
+            value={this.state.info.size}
             onChange={(e, input) => this._updateState('size', input)}
           />
       </div>
     )
   }
-}
-
-
-ExperimentInfo.defaultProps = {
-  id: '',
-  size: 0.1,
-  seed: Math.random().toString(36).substring(7),
 }
 
 export default ExperimentInfo
