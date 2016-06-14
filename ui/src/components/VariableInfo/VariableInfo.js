@@ -1,6 +1,7 @@
 import React from 'react'
 import TextField from 'material-ui/TextField';
 import Slider from 'material-ui/Slider';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
 
 export class ExperimentInfo extends React.Component {
   constructor(props) {
@@ -48,8 +49,8 @@ export class ExperimentInfo extends React.Component {
     return (
       <div>
         <TextField ref="id"
-            hintText="Numele Variabilei"
-            floatingLabelText="Variabila"
+            hintText="Variable Name"
+            floatingLabelText="Variable"
             floatingLabelFixed={true}
             fullWidth={true}
             value={this.state.info.id}

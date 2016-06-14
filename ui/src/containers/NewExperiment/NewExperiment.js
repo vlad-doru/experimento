@@ -18,43 +18,25 @@ import * as createActions from '../../redux/modules/create';
   state => ({
     info: state.create.info,
     validInfo: state.create.validInfo,
+    stepIndex: state.create.stepIndex,
   }),
   createActions)
 class NewExperiment extends React.Component {
   constructor(props) {
     super();
-
-    this.state = {
-      stepIndex: 0,
-    }
   }
 
-  handleNext = () => {
-     const {stepIndex} = this.state;
-     this.setState({
-       stepIndex: stepIndex + 1,
-     });
-   };
-
-   handlePrev = () => {
-     const {stepIndex} = this.state;
-     if (stepIndex > 0) {
-       this.setState({stepIndex: stepIndex - 1});
-     }
-   };
-
   renderStepActions(step, valid) {
-    const {stepIndex} = this.state;
 
     return (
       <div style={{margin: '12px 0'}}>
         <RaisedButton
           disabled={!valid}
-          label={stepIndex === 2 ? 'Finish' : 'Next'}
+          label={this.props.stepIndex === 2 ? 'Finish' : 'Next'}
           disableTouchRipple={true}
           disableFocusRipple={true}
           primary={true}
-          onTouchTap={this.handleNext}
+          onTouchTap={() => this.props.setStep(this.props.stepIndex + 1)}
           style={{marginRight: 12}}
         />
         {step > 0 && (
@@ -62,7 +44,7 @@ class NewExperiment extends React.Component {
             label="Back"
             disableTouchRipple={true}
             disableFocusRipple={true}
-            onTouchTap={this.handlePrev}
+            onTouchTap={() => this.props.setStep(this.props.stepIndex - 1)}
           />
         )}
       </div>
@@ -72,7 +54,7 @@ class NewExperiment extends React.Component {
   render () {
     return (
       <div>
-      <Stepper activeStep={this.state.stepIndex} orientation="vertical">
+      <Stepper activeStep={this.props.stepIndex} orientation="vertical">
        <Step>
          <StepLabel>Experiment Info</StepLabel>
          <StepContent>
@@ -85,7 +67,7 @@ class NewExperiment extends React.Component {
          </StepContent>
        </Step>
        <Step>
-         <StepLabel>Experiment Info</StepLabel>
+         <StepLabel>Variables Info</StepLabel>
          <StepContent>
            <VariableInfo />
            {this.renderStepActions(1, false)}
