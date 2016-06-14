@@ -11,7 +11,10 @@ class Header extends React.Component {
   render () {
     return (
       <div>
-      <AppBar zDepth={2}>
+      <AppBar
+          zDepth={2}
+          showMenuIconButton={false}
+        >
         <Paper circle={true} zDepth={2} style={{
           width: 120,
           height: 120,
