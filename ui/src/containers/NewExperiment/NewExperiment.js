@@ -9,6 +9,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 
 import ExperimentInfo from '../../components/ExperimentInfo'
+import VariableInfo from '../../components/VariableInfo'
 
 import classes from './NewExperiment.scss'
 
@@ -80,7 +81,7 @@ class NewExperiment extends React.Component {
        <Step>
          <StepLabel>Experiment Info</StepLabel>
          <StepContent>
-           Chestie
+           <VariableInfo />
            {this.renderStepActions(1, false)}
          </StepContent>
        </Step>
