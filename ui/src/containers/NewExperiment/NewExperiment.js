@@ -8,6 +8,8 @@ import {
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 
+import ExperimentInfo from '../../components/ExperimentInfo'
+
 import classes from './NewExperiment.scss'
 
 class NewExperiment extends React.Component {
@@ -16,14 +18,12 @@ class NewExperiment extends React.Component {
       <div>
       <Stepper activeStep={0} orientation="vertical">
        <Step>
-         <StepLabel>Experiment</StepLabel>
+         <StepLabel>Experiment Info</StepLabel>
          <StepContent>
-           <p>
-             Step 1
-           </p>
+           <ExperimentInfo />
          </StepContent>
        </Step>
-       </Stepper>
+      </Stepper>
       </div>
     )
   }
