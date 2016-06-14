@@ -80,6 +80,8 @@
     "babel-cli": "^6.5.1",
     "babel-core": "^6.3.17",
     "babel-loader": "^6.2.0",
+    "babel-plugin-syntax-decorators": "^6.8.0",
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
     "babel-plugin-transform-runtime": "^6.3.13",
     "babel-polyfill": "^6.9.0",
     "babel-preset-es2015": "^6.3.13",
@@ -128,6 +130,7 @@
   },
   "devDependencies": {
     "babel-eslint": "^6.0.0-beta.6",
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
     "chai": "^3.4.1",
     "chai-as-promised": "^5.1.0",
     "chai-enzyme": "^0.4.0",

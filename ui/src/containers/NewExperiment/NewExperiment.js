@@ -1,4 +1,5 @@
 import React from 'react'
+import {connect} from 'react-redux';
 import {
   Step,
   Stepper,
@@ -11,15 +12,20 @@ import FlatButton from 'material-ui/FlatButton';
 import ExperimentInfo from '../../components/ExperimentInfo'
 import VariableInfo from '../../components/VariableInfo'
 
-import classes from './NewExperiment.scss'
+import * as createActions from '../../redux/modules/create';
 
+@connect(
+  state => ({
+    info: state.create.info,
+    validInfo: state.create.validInfo,
+  }),
+  createActions)
 class NewExperiment extends React.Component {
   constructor(props) {
     super();
 
     this.state = {
       stepIndex: 0,
-      expInfo: {},
     }
   }
 
@@ -71,11 +77,11 @@ class NewExperiment extends React.Component {
          <StepLabel>Experiment Info</StepLabel>
          <StepContent>
            <ExperimentInfo
-              info={this.state.expInfo.info}
+              info={this.props.info}
               onChange={(data) =>
-                this.setState({expInfo: data})
+                this.props.setExperiment(data)
               }/>
-           {this.renderStepActions(0, this.state.expInfo.valid)}
+            {this.renderStepActions(0, this.props.validInfo)}
          </StepContent>
        </Step>
        <Step>
