@@ -1,21 +1,11 @@
 import React from 'react'
 import TextField from 'material-ui/TextField';
-import Slider from 'material-ui/Slider';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
-import {List, ListItem} from 'material-ui/List';
-import Divider from 'material-ui/Divider';
-import ActionInfo from 'material-ui/svg-icons/action/info';
-import ActionList from 'material-ui/svg-icons/action/list';
-import ActionDelete from 'material-ui/svg-icons/action/delete';
-import ActionAssignment from 'material-ui/svg-icons/action/assignment';
-import NavigationMoreVert from 'material-ui/svg-icons/navigation/more-vert';
-import Avatar from 'material-ui/Avatar';
-import Subheader from 'material-ui/Subheader';
-import {blue500, darkBlack, lightBlack} from 'material-ui/styles/colors';
-import __ from 'lodash';
 
-export class ExperimentVariables extends React.Component {
+import VariablesList from './VariablesList';
+
+export class VariableInfo extends React.Component {
   constructor(props) {
     super();
 
@@ -88,36 +78,6 @@ export class ExperimentVariables extends React.Component {
   }
 
   render () {
-
-    let vars =  __.map(this.state.variables,
-      (value, key) => {
-        console.log(key, value)
-        return (
-          <ListItem
-            style={{
-              backgroundColor: 'white',
-            }}
-            innerDivStyle={{
-              margin: '50px 1-px',
-              border: '1px solid white',
-            }}
-            leftAvatar={<Avatar icon={<ActionAssignment />}/>}
-            rightIcon={<NavigationMoreVert />}
-            primaryText={key}
-            secondaryText={
-              <p>
-                <span style={{color: darkBlack}}>
-                  {value.length ? "Possible values: " :
-                                  "No values were defined"}
-                </span><br />
-                {value.join(", ")}
-              </p>
-            }
-          />
-        )
-      }
-    );
-
     return (
       <div>
         <TextField
@@ -141,16 +101,11 @@ export class ExperimentVariables extends React.Component {
         </FloatingActionButton>
         <br/>
 
-        <div style={{textAlign: 'left'}}>
-        <List style={{border: 'none'}}>
-        <Subheader inset={true}>Variables</Subheader>
-          {vars}
-        </List>
-        </div>
+        <VariablesList variables={this.state.variables} />
 
       </div>
     )
   }
 }
 
-export default ExperimentVariables
+export default VariableInfo
