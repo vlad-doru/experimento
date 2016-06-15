@@ -14,7 +14,7 @@ import Avatar from 'material-ui/Avatar';
 import Subheader from 'material-ui/Subheader';
 import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
-import {blue500, red500, darkBlack, lightBlack} from 'material-ui/styles/colors';
+import {blue500, red500, yellow500, darkBlack, lightBlack} from 'material-ui/styles/colors';
 import __ from 'lodash';
 
 export class VariablesListItem extends React.Component {
@@ -33,7 +33,6 @@ export class VariablesListItem extends React.Component {
   };
 
   handleClose = () => {
-    this._addValue();
     this.setState({open: false});
   };
 
@@ -49,6 +48,17 @@ export class VariablesListItem extends React.Component {
       ...this.state,
       values: newValues,
       newValue: '',
+    }
+    this.props.onUpdate &&
+    this.props.onUpdate(this.props.name, newValues);
+    this.setState(newState);
+  }
+
+  _removeValue = (value) => {
+    const newValues = __.pull(this.state.values, value)
+    const newState = {
+      ...this.state,
+      values: newValues,
     }
     this.props.onUpdate &&
     this.props.onUpdate(this.props.name, newValues);
@@ -71,7 +81,10 @@ export class VariablesListItem extends React.Component {
             color: 'white',
             marginRight: 10,
           }}
-          onMouseUp={() => this.handleClose()}
+          onMouseUp={() => {
+            this._addValue()
+            this.handleClose()
+          }}
         />,
       <RaisedButton
           label="Delete variable"
@@ -102,9 +115,10 @@ export class VariablesListItem extends React.Component {
           secondaryTextLines={2}
           secondaryText={
             <p>
-              <span style={{color: darkBlack}}>
-                {this.state.values.length ? "Possible values: " :
-                                "No values were defined"}
+              <span style={{color: this.state.values.length ? darkBlack : red500}}>
+                {this.state.values.length ?
+                  "Possible values: " :
+                  "☢ No values were defined!"}
               </span><br />
               {this.state.values.join(", ")}
             </p>
@@ -138,6 +152,25 @@ export class VariablesListItem extends React.Component {
           >
            <ContentAdd />
          </FloatingActionButton>
+
+        <List>
+          {__.map(this.state.values, (value) => {
+              return (<ListItem
+                primaryText={value}
+                rightIcon={<ActionDelete />}
+                style={{
+                  backgroundColor: 'white',
+                }}
+                innerDivStyle={{
+                  margin: '50px 1-px',
+                  border: '1px solid white',
+                }}
+                onTouchTap={() => this._removeValue(value)}
+                />)
+            })
+          }
+        </List>
+
          </Dialog>
       </div>
     )

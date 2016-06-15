@@ -3,6 +3,8 @@ import TextField from 'material-ui/TextField';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 
+import __ from 'lodash';
+
 import VariablesList from './VariablesList';
 
 export class VariableInfo extends React.Component {
@@ -47,8 +49,11 @@ export class VariableInfo extends React.Component {
     if (!obj) {
       return false;
     }
-    // TODO: Check for at least one variable defined.
-    return false;
+    return __
+      .chain(obj)
+      .map((x) => Boolean(x.length))
+      .min()
+      .value()
   }
 
   _updateInput(value) {

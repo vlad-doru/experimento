@@ -30,7 +30,6 @@ export class VariablesList extends React.Component {
   }
 
   _handleUpdate(name, values) {
-    console.log("UPDATE", name, values)
     let newVariables = {
       ...this.state.variables,
       [name]: values,
