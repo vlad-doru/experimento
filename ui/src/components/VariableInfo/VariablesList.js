@@ -1,18 +1,10 @@
 import React from 'react'
-import FloatingActionButton from 'material-ui/FloatingActionButton';
-import ContentAdd from 'material-ui/svg-icons/content/add';
-import Dialog from 'material-ui/Dialog';
-import {List, ListItem} from 'material-ui/List';
-import Divider from 'material-ui/Divider';
-import ActionInfo from 'material-ui/svg-icons/action/info';
-import ActionList from 'material-ui/svg-icons/action/list';
-import ActionDelete from 'material-ui/svg-icons/action/delete';
-import ActionAssignment from 'material-ui/svg-icons/action/assignment';
-import NavigationMoreVert from 'material-ui/svg-icons/navigation/more-vert';
-import Avatar from 'material-ui/Avatar';
+import List from 'material-ui/List';
 import Subheader from 'material-ui/Subheader';
 import {blue500, darkBlack, lightBlack} from 'material-ui/styles/colors';
 import __ from 'lodash';
+
+import VariablesListItem from './VariablesListItem';
 
 export class VariablesList extends React.Component {
   constructor(props) {
@@ -33,32 +25,8 @@ export class VariablesList extends React.Component {
   render () {
 
     let vars =  __.map(this.state.variables,
-      (value, key) => {
-        return (
-          <ListItem
-            style={{
-              backgroundColor: 'white',
-            }}
-            key={key}
-            innerDivStyle={{
-              margin: '50px 1-px',
-              border: '1px solid white',
-            }}
-            leftAvatar={<Avatar icon={<ActionAssignment />}/>}
-            rightIcon={<NavigationMoreVert />}
-            primaryText={key}
-            secondaryText={
-              <p>
-                <span style={{color: darkBlack}}>
-                  {value.length ? "Possible values: " :
-                                  "No values were defined"}
-                </span><br />
-                {value.join(", ")}
-              </p>
-            }
-          />
-        )
-      }
+      (values, key) => <VariablesListItem
+        name={key} key={key} values={values} />
     );
 
     return (
