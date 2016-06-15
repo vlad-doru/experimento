@@ -11,6 +11,7 @@ export class VariablesList extends React.Component {
     super();
 
     this._handleDelete = this._handleDelete.bind(this);
+    this._handleUpdate = this._handleUpdate.bind(this);
 
     this.state = {
       variables: props.variables || {},
@@ -28,6 +29,18 @@ export class VariablesList extends React.Component {
     this.setState({variables: newVariables});
   }
 
+  _handleUpdate(name, values) {
+    console.log("UPDATE", name, values)
+    let newVariables = {
+      ...this.state.variables,
+      [name]: values,
+    }
+    if (this.props.onChange) {
+      this.props.onChange(newVariables);
+    }
+    this.setState({variables: newVariables});
+  }
+
   componentWillReceiveProps(nextProps) {
     if (this.props.variables != nextProps.variables) {
       this.setState({variables: nextProps.variables});
@@ -39,7 +52,8 @@ export class VariablesList extends React.Component {
     let vars =  __.map(this.state.variables,
       (values, key) => <VariablesListItem
         name={key} key={key} values={values}
-        onDelete={this._handleDelete}/>
+        onDelete={this._handleDelete}
+        onUpdate={this._handleUpdate}/>
     );
 
     return (

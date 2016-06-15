@@ -1,4 +1,5 @@
 import React from 'react'
+import TextField from 'material-ui/TextField';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import Dialog from 'material-ui/Dialog';
@@ -22,7 +23,8 @@ export class VariablesListItem extends React.Component {
 
     this.state = {
       open: false,
-      values: props.values
+      values: props.values,
+      newValue: '',
     };
   }
 
@@ -31,8 +33,27 @@ export class VariablesListItem extends React.Component {
   };
 
   handleClose = () => {
+    this._addValue();
     this.setState({open: false});
   };
+
+  _addValue = () => {
+    if (!this.state.newValue) {
+      return;
+    }
+    const newValues = __.uniq([
+      ...this.state.values,
+      this.state.newValue,
+    ])
+    const newState = {
+      ...this.state,
+      values: newValues,
+      newValue: '',
+    }
+    this.props.onUpdate &&
+    this.props.onUpdate(this.props.name, newValues);
+    this.setState(newState);
+  }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.values != nextProps.values) {
@@ -78,6 +99,7 @@ export class VariablesListItem extends React.Component {
           leftAvatar={<Avatar icon={<ActionAssignment />}/>}
           rightIcon={<NavigationMoreVert />}
           primaryText={this.props.name}
+          secondaryTextLines={2}
           secondaryText={
             <p>
               <span style={{color: darkBlack}}>
@@ -95,16 +117,29 @@ export class VariablesListItem extends React.Component {
            modal={false}
            open={this.state.open}
            onRequestClose={this.handleClose}>
-           Ceva
-           <FloatingActionButton
-               mini={true}
-               style={{
-                 marginRight: 10,
-               }}>
-             <ContentAdd />
-           </FloatingActionButton>
+         <TextField
+             hintText="Possible variable value"
+             floatingLabelText="Value"
+             floatingLabelFixed={true}
+             fullWidth={true}
+             value={this.state.newValue}
+             onChange={(e, x) => this.setState({newValue: x})}
+           /><br/>
+         <FloatingActionButton
+            mini={true}
+            disabled={!this.state.newValue}
+            style={{
+              marginRight: 10,
+              position: 'absolute',
+              right: '10',
+              top: '95',
+            }}
+            onMouseUp={this._addValue}
+          >
+           <ContentAdd />
+         </FloatingActionButton>
          </Dialog>
-        </div>
+      </div>
     )
   }
 }
