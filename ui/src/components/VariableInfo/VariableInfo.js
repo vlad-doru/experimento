@@ -13,6 +13,7 @@ export class VariableInfo extends React.Component {
     this._isValid = this._isValid.bind(this);
     this._updateInput = this._updateInput.bind(this);
     this._addVariable = this._addVariable.bind(this);
+    this._updateVariables = this._updateVariables.bind(this);
 
     this.state = {
       variableInput: props.variableInput || '',
@@ -77,6 +78,17 @@ export class VariableInfo extends React.Component {
     this.setState(newState);
   }
 
+  _updateVariables(newVariables) {
+    let newState = {
+      variables: newVariables,
+      valid: this._isValid(newVariables)
+    }
+    if (this.props && this.props.onChange) {
+      this.props.onChange(newState);
+    }
+    this.setState(newState);
+  }
+
   render () {
     return (
       <div>
@@ -101,7 +113,9 @@ export class VariableInfo extends React.Component {
         </FloatingActionButton>
         <br/>
 
-        <VariablesList variables={this.state.variables} />
+        <VariablesList
+          variables={this.state.variables}
+          onChange={this._updateVariables}/>
 
       </div>
     )

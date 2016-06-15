@@ -10,10 +10,22 @@ export class VariablesList extends React.Component {
   constructor(props) {
     super();
 
+    this._handleDelete = this._handleDelete.bind(this);
+
     this.state = {
       variables: props.variables || {},
-      valid: false,
     };
+  }
+
+  _handleDelete(name) {
+    let newVariables = {
+      ...this.state.variables,
+    }
+    delete newVariables[name];
+    if (this.props.onChange) {
+      this.props.onChange(newVariables);
+    }
+    this.setState({variables: newVariables});
   }
 
   componentWillReceiveProps(nextProps) {
@@ -26,13 +38,13 @@ export class VariablesList extends React.Component {
 
     let vars =  __.map(this.state.variables,
       (values, key) => <VariablesListItem
-        name={key} key={key} values={values} />
+        name={key} key={key} values={values}
+        onDelete={this._handleDelete}/>
     );
 
     return (
       <div style={{textAlign: 'left'}}>
         <List style={{border: 'none'}}>
-        <Subheader inset={true}>Variables</Subheader>
           {vars}
         </List>
       </div>
