@@ -21,6 +21,7 @@ import * as createActions from '../../redux/modules/create';
 
     variables: state.create.variables,
     validVariables: state.create.validVariables,
+    variableInput: state.create.variableInput,
 
     stepIndex: state.create.stepIndex,
   }),
@@ -75,6 +76,7 @@ class NewExperiment extends React.Component {
          <StepContent>
            <VariableInfo
              variables={this.props.variables}
+             variableInput={this.props.variableInput}
              onChange={(data) =>
                this.props.setVariables(data)
              }/>

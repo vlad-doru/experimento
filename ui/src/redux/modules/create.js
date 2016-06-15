@@ -42,6 +42,7 @@ export default function reducer(state = initialState, action) {
         ...state,
         variables: action.vars.variables,
         validVariables: action.vars.valid,
+        variableInput: action.vars.variableInput,
       }
     case STEP_INDEX:
       return {

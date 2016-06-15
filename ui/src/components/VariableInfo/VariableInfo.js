@@ -8,39 +8,67 @@ export class ExperimentVariables extends React.Component {
   constructor(props) {
     super();
 
+    this._isValidName = this._isValidName.bind(this);
     this._isValid = this._isValid.bind(this);
+    this._updateInput = this._updateInput.bind(this);
+    this._addVariable = this._addVariable.bind(this);
+
     this.state = {
-      variables: props.variables || {
-        id: '',
-      },
+      variableInput: props.variableInput || '',
+      variables: props.variables || {},
       valid: false,
     };
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.variables != nextProps.variables) {
-      this.setState({variables: nextProps.variables})
+      this.setState({variables: nextProps.variables});
     }
+    if (this.props.variableInput != nextProps.variableInput) {
+      this.setState({variableInput: nextProps.variableInput});
+    }
+  }
+
+  _isValidName(name) {
+    if (!name) {
+      return false;
+    }
+    if (this.state.variables
+        && this.state.variables
+        && this.state.variables.hasOwnProperty(name)) {
+      return false;
+    }
+    return true;
   }
 
   _isValid(obj) {
     if (!obj) {
       return false;
     }
-    if (!obj.id || obj.id == '') {
-      return false;
-    }
-    return true;
+    // TODO: Check for at least one variable defined.
+    return false;
   }
 
-  _updateState(key, value) {
+  _updateInput(value) {
+    let newState = {
+      ...this.state,
+      variableInput: value,
+    }
+    if (this.props && this.props.onChange) {
+      this.props.onChange(newState);
+    }
+    this.setState(newState);
+  }
+
+  _addVariable() {
     let newVariables = {
       ...this.state.variables,
-      [key]: value,
+      [this.state.variableInput]: [],
     };
     let newState = {
-        variables: newVariables,
-        valid: this._isValid(newVariables),
+      variables: newVariables,
+      variableInput: '',
+      valid: this._isValid(newVariables)
     }
     if (this.props && this.props.onChange) {
       this.props.onChange(newState);
@@ -56,16 +84,21 @@ export class ExperimentVariables extends React.Component {
             floatingLabelText="Variable"
             floatingLabelFixed={true}
             fullWidth={true}
-            value={this.state.variables.id}
-            onChange={(e, input) => this._updateState('id', input)}
+            value={this.state.variableInput}
+            onChange={(e, variableInput) => this._updateInput(variableInput)}
           /><br/>
-        <FloatingActionButton mini={true} style={{
-          position: 'absolute',
-          right: 10,
-          top: 20,
-        }}>
-            <ContentAdd />
+        <FloatingActionButton
+            disabled={!this._isValidName(this.state.variableInput)}
+            mini={true}
+            style={{
+              position: 'absolute',
+              right: 10,
+              top: 20,
+            }}
+            onMouseUp={this._addVariable}>
+          <ContentAdd />
         </FloatingActionButton>
+        {JSON.stringify(this.state.variables)}
       </div>
     )
   }
