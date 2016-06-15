@@ -2,42 +2,45 @@ import React from 'react'
 import TextField from 'material-ui/TextField';
 import Slider from 'material-ui/Slider';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
+import ContentAdd from 'material-ui/svg-icons/content/add';
 
-export class ExperimentInfo extends React.Component {
+export class ExperimentVariables extends React.Component {
   constructor(props) {
     super();
 
     this._isValid = this._isValid.bind(this);
     this.state = {
-      info: props.info || {
-
+      variables: props.variables || {
+        id: '',
       },
       valid: false,
     };
   }
 
-  componentDidMount() {
-    this.refs.id.focus();
-  }
-
   componentWillReceiveProps(nextProps) {
-    if (this.props.info != nextProps.info) {
-      this.setState({info: nextProps.info})
+    if (this.props.variables != nextProps.variables) {
+      this.setState({variables: nextProps.variables})
     }
   }
 
   _isValid(obj) {
+    if (!obj) {
+      return false;
+    }
+    if (!obj.id || obj.id == '') {
+      return false;
+    }
     return true;
   }
 
   _updateState(key, value) {
-    let newInfo = {
-      ...this.state.info,
+    let newVariables = {
+      ...this.state.variables,
       [key]: value,
     };
     let newState = {
-        info: newInfo,
-        valid: this._isValid(newInfo),
+        variables: newVariables,
+        valid: this._isValid(newVariables),
     }
     if (this.props && this.props.onChange) {
       this.props.onChange(newState);
@@ -48,17 +51,24 @@ export class ExperimentInfo extends React.Component {
   render () {
     return (
       <div>
-        <TextField ref="id"
+        <TextField
             hintText="Variable Name"
             floatingLabelText="Variable"
             floatingLabelFixed={true}
             fullWidth={true}
-            value={this.state.info.id}
+            value={this.state.variables.id}
             onChange={(e, input) => this._updateState('id', input)}
           /><br/>
+        <FloatingActionButton mini={true} style={{
+          position: 'absolute',
+          right: 10,
+          top: 20,
+        }}>
+            <ContentAdd />
+        </FloatingActionButton>
       </div>
     )
   }
 }
 
-export default ExperimentInfo
+export default ExperimentVariables

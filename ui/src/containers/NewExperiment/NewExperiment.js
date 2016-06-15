@@ -18,6 +18,10 @@ import * as createActions from '../../redux/modules/create';
   state => ({
     info: state.create.info,
     validInfo: state.create.validInfo,
+
+    variables: state.create.variables,
+    validVariables: state.create.validVariables,
+
     stepIndex: state.create.stepIndex,
   }),
   createActions)
@@ -69,8 +73,12 @@ class NewExperiment extends React.Component {
        <Step>
          <StepLabel>Variables Info</StepLabel>
          <StepContent>
-           <VariableInfo />
-           {this.renderStepActions(1, false)}
+           <VariableInfo
+             variables={this.props.variables}
+             onChange={(data) =>
+               this.props.setVariables(data)
+             }/>
+           {this.renderStepActions(1, this.props.validVariables)}
          </StepContent>
        </Step>
       </Stepper>

@@ -17,10 +17,6 @@ export class ExperimentInfo extends React.Component {
     };
   }
 
-  componentDidMount() {
-    this.refs.id.focus();
-  }
-
   componentWillReceiveProps(nextProps) {
     if (this.props.info != nextProps.info) {
       this.setState({info: nextProps.info})
@@ -58,7 +54,7 @@ export class ExperimentInfo extends React.Component {
   render () {
     return (
       <div>
-        <TextField ref="id"
+        <TextField
             hintText="Numele Exeperimentului"
             floatingLabelText="ID"
             floatingLabelFixed={true}
