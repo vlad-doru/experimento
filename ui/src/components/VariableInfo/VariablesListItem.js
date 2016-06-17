@@ -107,6 +107,7 @@ export class VariablesListItem extends React.Component {
           }}
           innerDivStyle={{
             border: '1px solid white',
+            backgroundColor: 'white',
           }}
           leftAvatar={<Avatar icon={<ActionAssignment />}/>}
           rightIcon={<NavigationMoreVert />}
@@ -144,8 +145,8 @@ export class VariablesListItem extends React.Component {
             style={{
               marginRight: 10,
               position: 'absolute',
-              right: '10',
-              top: '95',
+              right: 10,
+              top: 95,
             }}
             onMouseUp={this._addValue}
           >
@@ -160,9 +161,11 @@ export class VariablesListItem extends React.Component {
                 style={{
                   backgroundColor: 'white',
                 }}
+                key={value}
                 innerDivStyle={{
                   margin: '50px 1-px',
                   border: '1px solid white',
+                  backgroundColor: 'white',
                 }}
                 onTouchTap={() => this._removeValue(value)}
                 />)

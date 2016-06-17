@@ -133,6 +133,7 @@ export class GroupsInfo extends React.Component {
         <div style={{textAlign: 'left'}}>
         {__.map(this.props.variables, (values, key) => (
           <SelectField
+             key={key}
              value={this.state.values[key]}
              style={{marginRight: 20, width: '30%'}}
              floatingLabelText={"Variable " + key}
@@ -142,8 +143,10 @@ export class GroupsInfo extends React.Component {
              {__.map(values, (value) => (
                <MenuItem
                   style={{backgroundColor: 'white'}}
+                  key={value}
                   innerDivStyle={{
                     border: '1px solid white',
+                    backgroundColor: 'white',
                   }}
                   key={value}
                   value={value}
@@ -157,12 +160,13 @@ export class GroupsInfo extends React.Component {
           <ListItem
             onTouchTap={() => this._renewGroup(key)}
             style={{
-              backgroundColor: 'white',
               textAlign: 'left',
             }}
+            style={{backgroundColor: 'white'}}
             innerDivStyle={{
               border: '1px solid white',
               borderBottom: '1px solid #dddddd',
+              backgroundColor: 'white',
             }}
             rightIcon={<ActionCached />}>
             <div
@@ -171,7 +175,7 @@ export class GroupsInfo extends React.Component {
                   color: blue500,
                   marginBottom: 10,
                 }}>
-              Grupul {key}
+              Group {key}
             </div>
             {__.map(values, (value, key) => (
               <div style={{

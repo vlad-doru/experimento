@@ -71,7 +71,6 @@ export class Whitelist extends React.Component {
   }
 
   _addException = () => {
-    console.log(this.state);
     this._updateState({
       whitelistInput: '',
       whitelistGroup: undefined,
@@ -118,6 +117,7 @@ export class Whitelist extends React.Component {
                   style={{backgroundColor: 'white'}}
                   innerDivStyle={{
                     border: '1px solid white',
+                    backgroundColor: 'white',
                   }}
                   key={value}
                   value={value}
@@ -128,32 +128,25 @@ export class Whitelist extends React.Component {
         <List>
         {__.map(this.state.whitelist, (group, entity) => (
           <ListItem
-            onTouchTap={() => this._renew(key)}
+            onTouchTap={() => this._renew(entity)}
             style={{
               backgroundColor: 'white',
               textAlign: 'left',
             }}
             innerDivStyle={{
               border: '1px solid white',
+              backgroundColor: 'white',
               borderBottom: '1px solid #dddddd',
             }}
             rightIcon={<ActionCached />}>
             <div
                 style={{
                   fontWeight: 'bold',
-                  color: blue500,
+                  color: lightBlack,
                   marginBottom: 10,
                 }}>
-              Grupul {key}
+              Grupul {group} - {entity}
             </div>
-            {__.map(values, (value, key) => (
-              <div style={{
-                marginBottom: 5,
-                color: lightBlack,
-              }}>
-                Variable {key}: {value}
-              </div>
-            ))}
           </ListItem>
         ))}
         </List>
