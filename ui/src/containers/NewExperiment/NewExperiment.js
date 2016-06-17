@@ -43,7 +43,7 @@ class NewExperiment extends React.Component {
       <div style={{margin: '12px 0'}}>
         <RaisedButton
           disabled={!valid}
-          label={this.props.stepIndex === 2 ? 'Finish' : 'Next'}
+          label={this.props.stepIndex === 3 ? 'Finish' : 'Next'}
           disableTouchRipple={true}
           disableFocusRipple={true}
           primary={true}

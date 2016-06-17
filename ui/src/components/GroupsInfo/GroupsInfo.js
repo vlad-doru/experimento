@@ -51,7 +51,15 @@ export class GroupsInfo extends React.Component {
       .value();
   }
 
-  _updateState = (newState) => {
+  _isValid = (newState) => {
+    return newState.groups && Object.keys(newState).length > 1;
+  }
+
+  _updateState = (state) => {
+    const newState = {
+      ...state,
+      valid: this._isValid(state)
+    };
     if (this.props && this.props.onChange) {
       this.props.onChange(newState);
     }
