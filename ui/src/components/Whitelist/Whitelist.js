@@ -10,56 +10,34 @@ import {List, ListItem} from 'material-ui/List';
 
 import __ from 'lodash';
 
-export class GroupsInfo extends React.Component {
+export class Whitelist extends React.Component {
   constructor(props) {
     super();
 
     this.state = {
-      groupInput: props.groupInput || '',
-      groups: props.groups || {},
-      valid: false,
-      values: props.values || {},
+      whitelistInput: props.whitelistInput,
+      whitelistGroup: props.whitelistGroup,
+      whitelist: props.whitelist || {},
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.values != nextProps.values) {
-      this.setState({values: nextProps.values});
+    if (this.props.whitelist != nextProps.whitelist) {
+      this.setState({whitelist: nextProps.whitelist});
     }
-    if (this.props.groups != nextProps.groups) {
-      this.setState({groups: nextProps.groups});
+    if (this.props.whitelistInput != nextProps.whitelistInput) {
+      this.setState({whitelistInput: nextProps.whitelistInput});
     }
-    if (this.props.groupInput != nextProps.groupInput) {
-      this.setState({groupInput: nextProps.groupInput});
+    if (this.props.whitelistGroup != nextProps.whitelistGroup) {
+      this.setState({whitelistGroup: nextProps.whitelistGroup});
     }
   }
 
-  _isValidGroup = () => {
-    const name = this.state.groupInput;
-    if (!name) {
-      return false;
-    }
-    if (this.state.groups
-        && this.state.groups
-        && this.state.groups.hasOwnProperty(name)) {
-      return false;
-    }
-    return __
-      .chain(this.props.variables)
-      .map((value, key) => Boolean(this.state.values[key]))
-      .min()
-      .value();
+  _isValid = () => {
+    return this.state.whitelistInput && this.state.whitelistGroup;
   }
 
-  _isValid = (newState) => {
-    return newState.groups && Object.keys(newState.groups).length > 1;
-  }
-
-  _updateState = (state) => {
-    const newState = {
-      ...state,
-      valid: this._isValid(state)
-    };
+  _updateState = (newState) => {
     if (this.props && this.props.onChange) {
       this.props.onChange(newState);
     }
@@ -69,40 +47,37 @@ export class GroupsInfo extends React.Component {
   _updateInput = (value) => {
     this._updateState({
       ...this.state,
-      groupInput: value,
+      whitelistInput: value,
     })
   }
 
-  _updateValue = (key, value) => {
+  _updateGroup = (group) => {
     this._updateState({
       ...this.state,
-      values: {
-        ...this.state.values,
-        [key]: value,
-      }
+      whitelistGroup: group,
     })
   }
 
-  _renewGroup = (key) => {
-    let newGroups = {
-      ...this.state.groups,
+  _renew = (key) => {
+    let newWhitelist = {
+      ...this.state.whitelist,
     }
-    delete newGroups[key]
+    delete newWhitelist[key]
     this._updateState({
-      groupInput: key,
-      values: this.state.groups[key],
-      groups: newGroups,
+      whitelistInput: key,
+      whitelistGroup: this.state.whitelist[key],
+      whitelist: newWhitelist,
     })
   }
 
-  _addGroup = () => {
+  _addException = () => {
+    console.log(this.state);
     this._updateState({
-      groupInput: '',
-      valid: false,
-      values: {},
-      groups: {
-        ...this.state.groups,
-        [this.state.groupInput]: this.state.values,
+      whitelistInput: '',
+      whitelistGroup: undefined,
+      whitelist: {
+        ...this.state.whitelist,
+        [this.state.whitelistInput]: this.state.whitelistGroup,
       }
     })
   }
@@ -111,35 +86,34 @@ export class GroupsInfo extends React.Component {
     return (
       <div>
         <TextField
-            hintText="Group Name"
-            floatingLabelText="Group"
+            hintText="Entity Name"
+            floatingLabelText="Entity"
             floatingLabelFixed={true}
             fullWidth={true}
-            value={this.state.groupInput}
+            value={this.state.whitelistInput}
             onChange={(e, x) => this._updateInput(x)}
           /><br/>
         <FloatingActionButton
-            disabled={!this._isValidGroup(this.state.groupInput)}
+            disabled={!this._isValid()}
             mini={true}
             style={{
               position: 'absolute',
               right: 10,
               top: 20,
             }}
-            onMouseUp={this._addGroup}>
+            onMouseUp={this._addException}>
           <ContentAdd />
         </FloatingActionButton>
         <br/>
         <div style={{textAlign: 'left'}}>
-        {__.map(this.props.variables, (values, key) => (
           <SelectField
-             value={this.state.values[key]}
+             value={this.state.whitelistGroup}
              style={{marginRight: 20, width: '30%'}}
-             floatingLabelText={"Variable " + key}
-             hintText={"Value for variable " + key}
-             onChange={(event, index, x) => this._updateValue(key, x)}
+             floatingLabelText={"Group"}
+             hintText={"Group"}
+             onChange={(event, index, x) => this._updateGroup(x)}
            >
-             {__.map(values, (value) => (
+             {__.map(this.props.groups, (_, value) => (
                <MenuItem
                   style={{backgroundColor: 'white'}}
                   innerDivStyle={{
@@ -147,15 +121,14 @@ export class GroupsInfo extends React.Component {
                   }}
                   key={value}
                   value={value}
-                  primaryText={value} />,
+                  primaryText={value} />
              ))}
            </SelectField>
-        ))}
         </div>
         <List>
-        {__.map(this.state.groups, (values, key) => (
+        {__.map(this.state.whitelist, (group, entity) => (
           <ListItem
-            onTouchTap={() => this._renewGroup(key)}
+            onTouchTap={() => this._renew(key)}
             style={{
               backgroundColor: 'white',
               textAlign: 'left',
@@ -189,4 +162,4 @@ export class GroupsInfo extends React.Component {
   }
 }
 
-export default GroupsInfo
+export default Whitelist

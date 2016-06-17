@@ -2,6 +2,7 @@
 const EXPERIMENT = 'ui/create/EXPERIMENT';
 const VARIABLES = 'ui/create/VARIABLES';
 const GROUPS = 'ui/create/GROUPS';
+const WHITELIST = 'ui/create/WHITELIST';
 const STEP_INDEX = 'ui/create/STEP_INDEX';
 
 // Action Creators
@@ -23,6 +24,13 @@ export function setGroups(groups) {
   return {
     type: GROUPS,
     groups: groups,
+  }
+}
+
+export function setWhitelist(whitelist) {
+  return {
+    type: WHITELIST,
+    whitelist: whitelist,
   }
 }
 
@@ -59,6 +67,13 @@ export default function reducer(state = initialState, action) {
         values: action.groups.values,
         validGroups: action.groups.valid,
         groupInput: action.groups.groupInput,
+      }
+    case WHITELIST:
+      return {
+        ...state,
+        whitelist: action.whitelist.whitelist,
+        whitelistInput: action.whitelist.whitelistInput,
+        whitelistGroup: action.whitelist.whitelistGroup
       }
     case STEP_INDEX:
       return {

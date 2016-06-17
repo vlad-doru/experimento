@@ -12,6 +12,7 @@ import FlatButton from 'material-ui/FlatButton';
 import ExperimentInfo from '../../components/ExperimentInfo'
 import VariableInfo from '../../components/VariableInfo'
 import GroupsInfo from '../../components/GroupsInfo'
+import Whitelist from '../../components/Whitelist'
 
 import * as createActions from '../../redux/modules/create';
 
@@ -28,6 +29,10 @@ import * as createActions from '../../redux/modules/create';
     values: state.create.values,
     validGroups: state.create.validGroups,
     groupInput: state.create.groupInput,
+
+    whitelist: state.create.whitelist,
+    whitelistInput: state.create.whitelistInput,
+    whitelistGroup: state.create.whitelistGroup,
 
     stepIndex: state.create.stepIndex,
   }),
@@ -102,6 +107,20 @@ class NewExperiment extends React.Component {
                this.props.setGroups(data)
              }}/>
            {this.renderStepActions(1, this.props.validGroups)}
+         </StepContent>
+       </Step>
+       <Step>
+         <StepLabel>Whitelist</StepLabel>
+         <StepContent>
+           <Whitelist
+             whitelist={this.props.whitelist}
+             whitelistInput={this.props.whitelistInput}
+             whitelistGroup={this.props.whitelistGroup}
+             groups={this.props.groups}
+             onChange={(data) => {
+               this.props.setWhitelist(data)
+             }}/>
+           {this.renderStepActions(1, true)}
          </StepContent>
        </Step>
       </Stepper>

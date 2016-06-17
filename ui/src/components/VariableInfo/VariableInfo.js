@@ -53,7 +53,13 @@ export class VariableInfo extends React.Component {
       .chain(obj)
       .map((x) => Boolean(x.length))
       .min()
-      .value()
+      .value() &&
+    __.chain(obj)
+      .map((x) => x.length)
+      .sum()
+      .value() > 1 
+
+
   }
 
   _updateInput(value) {
