@@ -155,7 +155,7 @@ export class GroupsInfo extends React.Component {
            </SelectField>
         ))}
         </div>
-        <List>
+        <List style={{textAlign: 'left'}}>
         {__.map(this.state.groups, (values, key) => (
           <ListItem
             onTouchTap={() => this._renewGroup(key)}

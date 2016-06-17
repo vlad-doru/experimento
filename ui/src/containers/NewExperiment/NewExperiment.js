@@ -52,7 +52,18 @@ class NewExperiment extends React.Component {
           disableTouchRipple={true}
           disableFocusRipple={true}
           primary={true}
-          onTouchTap={() => this.props.setStep(this.props.stepIndex + 1)}
+          onTouchTap={() => {
+            if (this.props.stepIndex < 3) {
+              this.props.setStep(this.props.stepIndex + 1)
+            } else {
+              // TODO: Send a thing here.
+              console.log("FINISH");
+              console.log(this.props.info)
+              console.log(this.props.variables)
+              console.log(this.props.groups)
+              console.log(this.props.whitelist)
+            }
+          }}
           style={{marginRight: 12}}
         />
         {step > 0 && (
@@ -91,6 +102,7 @@ class NewExperiment extends React.Component {
              onChange={(data) => {
                this.props.setVariables(data)
                this.props.setGroups({})
+               this.props.setWhitelist({})
              }}/>
            {this.renderStepActions(1, this.props.validVariables)}
          </StepContent>
@@ -105,6 +117,7 @@ class NewExperiment extends React.Component {
              groupInput={this.props.groupInput}
              onChange={(data) => {
                this.props.setGroups(data)
+               this.props.setWhitelist({})
              }}/>
            {this.renderStepActions(1, this.props.validGroups)}
          </StepContent>

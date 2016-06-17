@@ -111,6 +111,7 @@
     "node-sass": "^3.7.0",
     "normalize.css": "^4.1.1",
     "postcss-loader": "^0.9.0",
+    "protobufjs": "^5.0.1",
     "react": "^15.0.0",
     "react-dom": "^15.0.0",
     "react-redux": "^4.0.0",
