@@ -100,7 +100,6 @@ export class VariableInfo extends React.Component {
         <TextField
             hintText="Variable Name"
             floatingLabelText="Variable"
-            floatingLabelFixed={true}
             fullWidth={true}
             value={this.state.variableInput}
             onChange={(e, variableInput) => this._updateInput(variableInput)}

@@ -57,21 +57,18 @@ export class ExperimentInfo extends React.Component {
         <TextField
             hintText="Numele Exeperimentului"
             floatingLabelText="ID"
-            floatingLabelFixed={true}
             fullWidth={true}
             value={this.state.info.id}
             onChange={(e, input) => this._updateState('id', input)}
           /><br/>
         <TextField
             floatingLabelText="Seed"
-            floatingLabelFixed={true}
             fullWidth={true}
             disabled={true}
             value={this.state.info.seed}
           /><br/>
         <TextField
             floatingLabelText="Size"
-            floatingLabelFixed={true}
             fullWidth={true}
             value={this.state.info.size}
           /><br/>

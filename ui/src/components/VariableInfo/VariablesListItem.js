@@ -106,7 +106,6 @@ export class VariablesListItem extends React.Component {
             backgroundColor: 'white',
           }}
           innerDivStyle={{
-            margin: '50px 1-px',
             border: '1px solid white',
           }}
           leftAvatar={<Avatar icon={<ActionAssignment />}/>}

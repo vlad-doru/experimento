@@ -56,6 +56,7 @@ export default function reducer(state = initialState, action) {
       return {
         ...state,
         groups: action.groups.groups,
+        values: action.groups.values,
         validGroups: action.groups.valid,
         groupInput: action.groups.groupInput,
       }

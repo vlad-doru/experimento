@@ -2,6 +2,8 @@ import React from 'react'
 import TextField from 'material-ui/TextField';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
 
 import __ from 'lodash';
 
@@ -13,10 +15,14 @@ export class GroupsInfo extends React.Component {
       groupInput: props.groupInput || '',
       groups: props.groups || {},
       valid: false,
+      values: props.values || {},
     };
   }
 
   componentWillReceiveProps(nextProps) {
+    if (this.props.values != nextProps.values) {
+      this.setState({values: nextProps.values});
+    }
     if (this.props.groups != nextProps.groups) {
       this.setState({groups: nextProps.groups});
     }
@@ -25,7 +31,8 @@ export class GroupsInfo extends React.Component {
     }
   }
 
-  _isValidName = (name) => {
+  _isValidGroup = () => {
+    const name = this.state.groupInput;
     if (!name) {
       return false;
     }
@@ -34,23 +41,47 @@ export class GroupsInfo extends React.Component {
         && this.state.groups.hasOwnProperty(name)) {
       return false;
     }
-    return true;
+    return __
+      .chain(this.props.variables)
+      .map((value, key) => Boolean(this.state.values[key]))
+      .min()
+      .value();
   }
 
-  _updateInput = (value) => {
-    let newState = {
-      ...this.state,
-      groupInput: value,
-    }
+  _updateState = (newState) => {
     if (this.props && this.props.onChange) {
       this.props.onChange(newState);
     }
     this.setState(newState);
   }
 
+  _updateInput = (value) => {
+    this._updateState({
+      ...this.state,
+      groupInput: value,
+    })
+  }
+
+  _updateValue = (key, value) => {
+    this._updateState({
+      ...this.state,
+      values: {
+        ...this.state.values,
+        [key]: value,
+      }
+    })
+  }
+
   _addGroup = () => {
-    // TODO: Create the group with sensible defaults here.
-    console.log("new group", this.state.groupInput);
+    this._updateState({
+      groupInput: '',
+      valid: false,
+      values: {},
+      groups: {
+        ...this.state.groups,
+        [this.state.groupInput]: this.state.values,
+      }
+    })
   }
 
   render () {
@@ -65,7 +96,7 @@ export class GroupsInfo extends React.Component {
             onChange={(e, x) => this._updateInput(x)}
           /><br/>
         <FloatingActionButton
-            disabled={!this._isValidName(this.state.groupInput)}
+            disabled={!this._isValidGroup(this.state.groupInput)}
             mini={true}
             style={{
               position: 'absolute',
@@ -76,6 +107,33 @@ export class GroupsInfo extends React.Component {
           <ContentAdd />
         </FloatingActionButton>
         <br/>
+        <div style={{textAlign: 'left'}}>
+        {__.map(this.props.variables, (values, key) => (
+          <SelectField
+             value={this.state.values[key]}
+             style={{marginRight: 20, width: '30%'}}
+             floatingLabelText={"Variable " + key}
+             hintText={"Value for variable " + key}
+             onChange={(event, index, x) => this._updateValue(key, x)}
+           >
+             {__.map(values, (value) => (
+               <MenuItem
+                  style={{backgroundColor: 'white'}}
+                  innerDivStyle={{
+                    border: '1px solid white',
+                  }}
+                  key={value}
+                  value={value}
+                  primaryText={value} />,
+             ))}
+           </SelectField>
+        ))}
+        </div>
+        <div>
+        {__.map(this.state.groups, (values, key) => (
+          <div> {key} -- {JSON.stringify(values)} </div>
+        ))}
+        </div>
       </div>
     )
   }

@@ -25,6 +25,7 @@ import * as createActions from '../../redux/modules/create';
     variableInput: state.create.variableInput,
 
     groups: state.create.groups,
+    values: state.create.values,
     validGroups: state.create.validGroups,
     groupInput: state.create.groupInput,
 
@@ -82,9 +83,10 @@ class NewExperiment extends React.Component {
            <VariableInfo
              variables={this.props.variables}
              variableInput={this.props.variableInput}
-             onChange={(data) =>
+             onChange={(data) => {
                this.props.setVariables(data)
-             }/>
+               this.props.setGroups({})
+             }}/>
            {this.renderStepActions(1, this.props.validVariables)}
          </StepContent>
        </Step>
@@ -92,11 +94,13 @@ class NewExperiment extends React.Component {
          <StepLabel>Group Info</StepLabel>
          <StepContent>
            <GroupsInfo
+             variables={this.props.variables}
+             values={this.props.values}
              groups={this.props.groups}
              groupInput={this.props.groupInput}
-             onChange={(data) =>
+             onChange={(data) => {
                this.props.setGroups(data)
-             }/>
+             }}/>
            {this.renderStepActions(1, this.props.validGroups)}
          </StepContent>
        </Step>
