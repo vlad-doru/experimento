@@ -10,7 +10,7 @@ export const CoreLayout = ({ children }) => (
     <div className="container" style={{height: '100%'}}>
       <Paper rounded={true} style={{
         paddingTop: 20,
-        height: "90%",
+        minHeight: "90%",
       }}>
       <div style={{
         marginTop: 50,

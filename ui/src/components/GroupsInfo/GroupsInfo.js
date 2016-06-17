@@ -3,7 +3,10 @@ import TextField from 'material-ui/TextField';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import SelectField from 'material-ui/SelectField';
+import ActionCached from 'material-ui/svg-icons/action/cached';
 import MenuItem from 'material-ui/MenuItem';
+import {blue500, red500, yellow500, darkBlack, lightBlack} from 'material-ui/styles/colors';
+import {List, ListItem} from 'material-ui/List';
 
 import __ from 'lodash';
 
@@ -72,6 +75,18 @@ export class GroupsInfo extends React.Component {
     })
   }
 
+  _renewGroup = (key) => {
+    let newGroups = {
+      ...this.state.groups,
+    }
+    delete newGroups[key]
+    this._updateState({
+      groupInput: key,
+      values: this.state.groups[key],
+      groups: newGroups,
+    })
+  }
+
   _addGroup = () => {
     this._updateState({
       groupInput: '',
@@ -129,11 +144,38 @@ export class GroupsInfo extends React.Component {
            </SelectField>
         ))}
         </div>
-        <div>
+        <List>
         {__.map(this.state.groups, (values, key) => (
-          <div> {key} -- {JSON.stringify(values)} </div>
+          <ListItem
+            onTouchTap={() => this._renewGroup(key)}
+            style={{
+              backgroundColor: 'white',
+              textAlign: 'left',
+            }}
+            innerDivStyle={{
+              border: '1px solid white',
+              borderBottom: '1px solid #dddddd',
+            }}
+            rightIcon={<ActionCached />}>
+            <div
+                style={{
+                  fontWeight: 'bold',
+                  color: blue500,
+                  marginBottom: 10,
+                }}>
+              Grupul {key}
+            </div>
+            {__.map(values, (value, key) => (
+              <div style={{
+                marginBottom: 5,
+                color: lightBlack,
+              }}>
+                Variable {key}: {value}
+              </div>
+            ))}
+          </ListItem>
         ))}
-        </div>
+        </List>
       </div>
     )
   }
