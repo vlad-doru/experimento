@@ -11,6 +11,7 @@ import FlatButton from 'material-ui/FlatButton';
 
 import ExperimentInfo from '../../components/ExperimentInfo'
 import VariableInfo from '../../components/VariableInfo'
+import GroupsInfo from '../../components/GroupsInfo'
 
 import * as createActions from '../../redux/modules/create';
 
@@ -22,6 +23,10 @@ import * as createActions from '../../redux/modules/create';
     variables: state.create.variables,
     validVariables: state.create.validVariables,
     variableInput: state.create.variableInput,
+
+    groups: state.create.groups,
+    validGroups: state.create.validGroups,
+    groupInput: state.create.groupInput,
 
     stepIndex: state.create.stepIndex,
   }),
@@ -81,6 +86,18 @@ class NewExperiment extends React.Component {
                this.props.setVariables(data)
              }/>
            {this.renderStepActions(1, this.props.validVariables)}
+         </StepContent>
+       </Step>
+       <Step>
+         <StepLabel>Group Info</StepLabel>
+         <StepContent>
+           <GroupsInfo
+             groups={this.props.groups}
+             groupInput={this.props.groupInput}
+             onChange={(data) =>
+               this.props.setGroups(data)
+             }/>
+           {this.renderStepActions(1, this.props.validGroups)}
          </StepContent>
        </Step>
       </Stepper>

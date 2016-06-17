@@ -1,6 +1,7 @@
 // Constants
 const EXPERIMENT = 'ui/create/EXPERIMENT';
 const VARIABLES = 'ui/create/VARIABLES';
+const GROUPS = 'ui/create/GROUPS';
 const STEP_INDEX = 'ui/create/STEP_INDEX';
 
 // Action Creators
@@ -15,6 +16,13 @@ export function setVariables(vars) {
   return {
     type: VARIABLES,
     vars: vars,
+  }
+}
+
+export function setGroups(groups) {
+  return {
+    type: GROUPS,
+    groups: groups,
   }
 }
 
@@ -43,6 +51,13 @@ export default function reducer(state = initialState, action) {
         variables: action.vars.variables,
         validVariables: action.vars.valid,
         variableInput: action.vars.variableInput,
+      }
+    case GROUPS:
+      return {
+        ...state,
+        groups: action.groups.groups,
+        validGroups: action.groups.valid,
+        groupInput: action.groups.groupInput,
       }
     case STEP_INDEX:
       return {
