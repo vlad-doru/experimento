@@ -2,7 +2,7 @@ package stores
 
 import (
 	"github.com/dropbox/godropbox/container/concurrent"
-	"github.com/vlad-doru/experimento/interfaces"
+	"github.com/vlad-doru/experimento/backend/interfaces"
 )
 
 // MemoryStore implements the Store interface defined by the experimento project

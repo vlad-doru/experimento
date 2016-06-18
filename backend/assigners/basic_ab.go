@@ -1,8 +1,8 @@
 package assigners
 
 import (
-	"github.com/vlad-doru/experimento/data"
-	"github.com/vlad-doru/experimento/utils/hashing"
+	"github.com/vlad-doru/experimento/backend/data"
+	"github.com/vlad-doru/experimento/backend/utils/hashing"
 
 	"fmt"
 )

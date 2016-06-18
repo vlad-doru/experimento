@@ -2,8 +2,8 @@ package assigners_test
 
 import (
 	"github.com/stretchr/testify/assert"
-	"github.com/vlad-doru/experimento/assigners"
-	"github.com/vlad-doru/experimento/utils/test"
+	"github.com/vlad-doru/experimento/backend/assigners"
+	"github.com/vlad-doru/experimento/backend/utils/test"
 
 	"testing"
 )

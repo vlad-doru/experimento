@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/vlad-doru/experimento/aggregators"
-	"github.com/vlad-doru/experimento/assigners"
-	"github.com/vlad-doru/experimento/utils/test"
+	"github.com/vlad-doru/experimento/backend/aggregators"
+	"github.com/vlad-doru/experimento/backend/assigners"
+	"github.com/vlad-doru/experimento/backend/utils/test"
 
 	"fmt"
 	"log"

@@ -1,15 +1,15 @@
 package test
 
 import (
-	"github.com/vlad-doru/experimento/assigners"
-	"github.com/vlad-doru/experimento/data"
-	"github.com/vlad-doru/experimento/interfaces"
-	"github.com/vlad-doru/experimento/repositories"
-	"github.com/vlad-doru/experimento/stores"
+	"github.com/vlad-doru/experimento/backend/assigners"
+	"github.com/vlad-doru/experimento/backend/data"
+	"github.com/vlad-doru/experimento/backend/interfaces"
+	"github.com/vlad-doru/experimento/backend/repositories"
+	"github.com/vlad-doru/experimento/backend/stores"
 
 	"math/rand"
 
-	"github.com/vlad-doru/experimento/service"
+	"github.com/vlad-doru/experimento/backend/service"
 )
 
 // ExpTestSeed allows to change the seed of the test experiment.

@@ -2,8 +2,8 @@ package service_test
 
 import (
 	"github.com/stretchr/testify/assert"
-	"github.com/vlad-doru/experimento/aggregators"
-	"github.com/vlad-doru/experimento/utils/test"
+	"github.com/vlad-doru/experimento/backend/aggregators"
+	"github.com/vlad-doru/experimento/backend/utils/test"
 
 	"math/rand"
 

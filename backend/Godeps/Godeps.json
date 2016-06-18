@@ -1,5 +1,5 @@
 {
-	"ImportPath": "github.com/vlad-doru/experimento",
+	"ImportPath": "github.com/vlad-doru/experimento/backend",
 	"GoVersion": "go1.6",
 	"GodepVersion": "v60",
 	"Packages": [

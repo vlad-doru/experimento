@@ -1,7 +1,7 @@
 package interfaces
 
 import (
-	"github.com/vlad-doru/experimento/data"
+	"github.com/vlad-doru/experimento/backend/data"
 
 	"fmt"
 )

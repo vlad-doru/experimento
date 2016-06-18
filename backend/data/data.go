@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/vlad-doru/experimento/utils/hashing"
+	"github.com/vlad-doru/experimento/backend/utils/hashing"
 )
 
 // GroupVariable is a special variable name, reserved by the framework.

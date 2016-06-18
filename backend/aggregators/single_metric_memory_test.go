@@ -2,7 +2,7 @@ package aggregators_test
 
 import (
 	"github.com/stretchr/testify/assert"
-	"github.com/vlad-doru/experimento/aggregators"
+	"github.com/vlad-doru/experimento/backend/aggregators"
 
 	"math/rand"
 	"testing"

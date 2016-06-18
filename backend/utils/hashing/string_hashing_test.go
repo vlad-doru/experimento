@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/vlad-doru/experimento/utils/hashing"
-	"github.com/vlad-doru/experimento/utils/test"
+	"github.com/vlad-doru/experimento/backend/utils/hashing"
+	"github.com/vlad-doru/experimento/backend/utils/test"
 )
 
 func TestHashFloat(t *testing.T) {
