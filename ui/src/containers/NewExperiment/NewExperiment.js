@@ -14,8 +14,6 @@ import VariableInfo from '../../components/VariableInfo'
 import GroupsInfo from '../../components/GroupsInfo'
 import Whitelist from '../../components/Whitelist'
 
-import ConstructExperiment from '../../helpers/messages'
-
 import * as createActions from '../../redux/modules/create';
 
 @connect(
