@@ -3,7 +3,6 @@ package data
 import (
 	"fmt"
 	"sort"
-	"time"
 
 	"github.com/vlad-doru/experimento/utils/hashing"
 )
@@ -11,29 +10,18 @@ import (
 // GroupVariable is a special variable name, reserved by the framework.
 const GroupVariable string = "group"
 
-// InternalExperiment embeds the Experiment struct, while adding
-// more fields for internal use.
-type InternalExperiment struct {
-	Experiment
-
-	InternalSeed   uint64
-	Seed           uint64
-	SortedGroupIDs []string
-}
-
 // NewExperiment returns a new, initialized, Experiment object.
 func NewExperiment(
 	info *ExperimentInfo,
 	varsInfo map[string]*VariableInfo,
 	groups map[string]*GroupInfo,
 	whitelist map[string]string,
-) (InternalExperiment, error) {
-	exp := InternalExperiment{Experiment: Experiment{
-		Started:       time.Now().Unix(),
+) (Experiment, error) {
+	exp := Experiment{
 		Info:          info,
 		VariablesInfo: varsInfo,
 		GroupsInfo:    groups,
-		Whitelist:     whitelist}}
+		Whitelist:     whitelist}
 	// Validate the experiment description.
 	err := exp.Validate()
 	if err != nil {
@@ -44,13 +32,13 @@ func NewExperiment(
 	// Se the exeternal seed based on the hash of the given seed.
 	exp.Seed = hashing.Hash(exp.Info.SeedValue)
 	// Sort the group ids.
-	exp.SortedGroupIDs = make([]string, 0)
+	exp.SortedGroupIds = make([]string, 0)
 	for groupID, groupInfo := range exp.GroupsInfo {
-		exp.SortedGroupIDs = append(exp.SortedGroupIDs, groupID)
+		exp.SortedGroupIds = append(exp.SortedGroupIds, groupID)
 		// Set the special variable name, GroupVariable, for indicating the group.
 		groupInfo.Variables[GroupVariable] = groupID
 	}
-	sort.Strings(exp.SortedGroupIDs)
+	sort.Strings(exp.SortedGroupIds)
 	// Return the result.
 	return exp, nil
 }

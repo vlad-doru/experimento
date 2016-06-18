@@ -35,7 +35,7 @@ var varsInfo = map[string]*data.VariableInfo{
 
 // GetDefaultExperimentDescription returns a classical experiment setup,
 // decribing a control group and a test group.
-func GetDefaultExperimentDescription() (data.InternalExperiment, error) {
+func GetDefaultExperimentDescription() (data.Experiment, error) {
 	// Set a specific random seed.
 	info := &data.ExperimentInfo{
 		Id:        "experiment",

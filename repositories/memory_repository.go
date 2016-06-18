@@ -9,17 +9,17 @@ import (
 // MemoryRepository is a local, in-memory experiment repository.
 // It is implemented mainly for testing purposes.
 type MemoryRepository struct {
-	experiments map[string]data.InternalExperiment
+	experiments map[string]data.Experiment
 }
 
 // NewMemoryRepository returns a new MemoryRepository object.
 func NewMemoryRepository() *MemoryRepository {
-	experiments := make(map[string]data.InternalExperiment)
+	experiments := make(map[string]data.Experiment)
 	return &MemoryRepository{experiments}
 }
 
 // CreateExperiment saves an experiment with the given description in the repository.
-func (repository *MemoryRepository) CreateExperiment(exp data.InternalExperiment) error {
+func (repository *MemoryRepository) CreateExperiment(exp data.Experiment) error {
 	_, ok := repository.experiments[exp.Info.Id]
 	if ok == true {
 		return fmt.Errorf("There is already an experiment with the given id: %s", exp.Info.Id)
@@ -30,10 +30,10 @@ func (repository *MemoryRepository) CreateExperiment(exp data.InternalExperiment
 
 // GetExperiment returns the experiment description of the experiment with the
 // specified experiment id.
-func (repository *MemoryRepository) GetExperiment(expID string) (data.InternalExperiment, error) {
+func (repository *MemoryRepository) GetExperiment(expID string) (data.Experiment, error) {
 	exp, ok := repository.experiments[expID]
 	if ok == false {
-		return data.InternalExperiment{}, fmt.Errorf("The experiment with id %s does not exist.", expID)
+		return data.Experiment{}, fmt.Errorf("The experiment with id %s does not exist.", expID)
 	}
 	return exp, nil
 }
@@ -44,6 +44,6 @@ func (repository *MemoryRepository) DestroyExperiment(expID string) {
 }
 
 // GetExperiments returns all the current experiments form the memory.
-func (repository *MemoryRepository) GetExperiments() (map[string]data.InternalExperiment, error) {
+func (repository *MemoryRepository) GetExperiments() (map[string]data.Experiment, error) {
 	return repository.experiments, nil
 }

@@ -17,12 +17,12 @@ func NewBasicAB() *BasicAB {
 }
 
 // AssignGroup returns the group id that will be assigned to a new entity id.
-func (assigner *BasicAB) AssignGroup(entityID string, exp data.InternalExperiment) (string, error) {
+func (assigner *BasicAB) AssignGroup(entityID string, exp data.Experiment) (string, error) {
 	r := hashing.HashFloat(entityID, exp.Seed)
 
 	// We use the previously generated random number to decide which group we map this id to.
 	s := 0.0
-	for _, groupID := range exp.SortedGroupIDs {
+	for _, groupID := range exp.SortedGroupIds {
 		group := exp.GroupsInfo[groupID]
 		s += group.InitialSize
 		if r <= s {

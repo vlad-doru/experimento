@@ -16,7 +16,7 @@ type Repository interface {
 	// called for every query of the experimento system, and subscribing to changes
 	// to the repository made by other parties.
 	// This method should be thread safe.
-	GetExperiments() (map[string]data.InternalExperiment, error)
+	GetExperiments() (map[string]data.Experiment, error)
 }
 
 // Store describes an interface for storing and querying the
@@ -44,7 +44,7 @@ func (e NoGroupSet) Error() string {
 // will be mapped to.
 type Assigner interface {
 	// This method should be thread safe.
-	AssignGroup(entityID string, desc data.InternalExperiment) (string, error)
+	AssignGroup(entityID string, desc data.Experiment) (string, error)
 }
 
 // Aggregator is an interface that is responsible for providing a

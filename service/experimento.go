@@ -62,7 +62,7 @@ func (service *ExperimentoService) GetAllVariables(entityID string) (Variables, 
 		// If it is whitelisted or in the experiment we go on and get the Variables
 		// in parallel.
 		validExperiments++
-		go func(id string, desc data.InternalExperiment) {
+		go func(id string, desc data.Experiment) {
 			// Get the variable then send it through the channel.
 			vars, err := service.getVariables(entityID, desc)
 			c <- &expVar{id, vars, err}
@@ -82,7 +82,7 @@ func (service *ExperimentoService) GetAllVariables(entityID string) (Variables, 
 	return result, nil
 }
 
-func (service *ExperimentoService) getVariables(entityID string, exp data.InternalExperiment) (map[string]string, error) {
+func (service *ExperimentoService) getVariables(entityID string, exp data.Experiment) (map[string]string, error) {
 	var groupID string
 	var err error
 	groupID, err = service.store.GetExperimentGroup(entityID, exp.Info.Id)

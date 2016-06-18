@@ -28,7 +28,7 @@ func NewProbBandit(aggregator interfaces.Aggregator, holdoutSize float64) (*Prob
 }
 
 // AssignGroup returns the group id that will be assigned to a new entity id.
-func (assigner *ProbBandit) AssignGroup(entityID string, exp data.InternalExperiment) (string, error) {
+func (assigner *ProbBandit) AssignGroup(entityID string, exp data.Experiment) (string, error) {
 	entityHash := hashing.Hash(entityID)
 	// internalR := hashing.MapUint64ToFloat(entityHash, exp.InternalSeed^exp.Seed)
 	internalR := rand.Float64()
@@ -43,12 +43,12 @@ func (assigner *ProbBandit) AssignGroup(entityID string, exp data.InternalExperi
 	efficiencies, err := assigner.aggregator.Efficiency(exp.Info.Id)
 	// If we don't have efficiency results yet, or an error occured, use the
 	// classical A/B testing method.
-	if (err != nil) || (efficiencies == nil) || (len(efficiencies) < len(exp.SortedGroupIDs)) {
+	if (err != nil) || (efficiencies == nil) || (len(efficiencies) < len(exp.SortedGroupIds)) {
 		return assigner.abChoice(r, exp)
 	}
 
 	totalEfficiency := 0.0
-	for _, groupID := range exp.SortedGroupIDs {
+	for _, groupID := range exp.SortedGroupIds {
 		efficiency := efficiencies[groupID]
 		totalEfficiency += efficiency
 	}
@@ -57,7 +57,7 @@ func (assigner *ProbBandit) AssignGroup(entityID string, exp data.InternalExperi
 	}
 	// TODO: Count for how many we use the bandit methdod.
 	s := 0.0
-	for _, groupID := range exp.SortedGroupIDs {
+	for _, groupID := range exp.SortedGroupIds {
 		efficiency := efficiencies[groupID]
 		s += efficiency / totalEfficiency
 		if r <= s {
@@ -68,9 +68,9 @@ func (assigner *ProbBandit) AssignGroup(entityID string, exp data.InternalExperi
 	return "", fmt.Errorf("Could not generate a valid group id. Please investigate the algorithm: %v %v", r, s)
 }
 
-func (assigner *ProbBandit) abChoice(r float64, exp data.InternalExperiment) (string, error) {
+func (assigner *ProbBandit) abChoice(r float64, exp data.Experiment) (string, error) {
 	s := 0.0
-	for _, groupID := range exp.SortedGroupIDs {
+	for _, groupID := range exp.SortedGroupIds {
 		group := exp.GroupsInfo[groupID]
 		s += group.InitialSize
 		if r <= s {

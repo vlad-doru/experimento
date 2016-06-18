@@ -26,6 +26,11 @@ message Experiment {
 	map<string, GroupInfo> groups_info = 3;
 
 	map<string, string> whitelist = 4;
+
+	// Fields that are populated by the sistem.
+	uint64 internal_seed = 5;
+	uint64 seed = 6;
+	repeated string sorted_group_ids = 7;
 }
 
 message Experiments {
