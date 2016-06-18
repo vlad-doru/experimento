@@ -27,3 +27,22 @@ message Experiment {
 
 	map<string, string> whitelist = 4;
 }
+
+message Experiments {
+	map<string, Experiment> experiments = 1;
+}
+
+message Response {
+	bool ok = 1;
+	string error = 2;
+}
+
+message Void {
+
+}
+
+service Repository {
+  rpc SaveExperiment (Experiment) returns(Response);
+	rpc DropExperiment (ExperimentInfo) returns(Response);
+	rpc GetExperiments (Void) returns (Experiments);
+}

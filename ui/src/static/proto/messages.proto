@@ -1,1 +1,48 @@
-../data/messages.proto
+syntax = "proto3";
+
+package data;
+
+// Info holds general information about the experiment.
+message ExperimentInfo {
+	string id = 1;
+	string seed_value = 2;
+	double size = 3;
+	int64 started = 4;
+}
+
+// GroupDescription specifies the size of the group and the value for the experiment variables.
+message GroupInfo {
+	double initial_size = 1;
+	map<string, string> variables = 2;
+}
+
+message VariableInfo {
+	repeated string options = 1;
+}
+
+message Experiment {
+	ExperimentInfo info = 1;
+	map<string, VariableInfo> variables_info = 2;
+	map<string, GroupInfo> groups_info = 3;
+
+	map<string, string> whitelist = 4;
+}
+
+message Experiments {
+	map<string, Experiment> experiments = 1;
+}
+
+message Response {
+	bool ok = 1;
+	string error = 2;
+}
+
+message Void {
+
+}
+
+service Repository {
+  rpc SaveExperiment (Experiment) returns(Response);
+	rpc DropExperiment (ExperimentInfo) returns(Response);
+	rpc GetExperiments (Void) returns (Experiments);
+}
