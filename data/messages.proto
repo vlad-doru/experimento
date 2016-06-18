@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package data;
 
-import "google/protobuf/any.proto";
-
 // Info holds general information about the experiment.
 message ExperimentInfo {
 	string id = 1;
@@ -28,7 +26,4 @@ message Experiment {
 	map<string, GroupInfo> groups_info = 3;
 
 	map<string, string> whitelist = 4;
-
-	// We allow extensability for the experiment description.
-	google.protobuf.Any details = 100;
 }

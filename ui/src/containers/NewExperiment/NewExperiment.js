@@ -14,6 +14,8 @@ import VariableInfo from '../../components/VariableInfo'
 import GroupsInfo from '../../components/GroupsInfo'
 import Whitelist from '../../components/Whitelist'
 
+import ConstructExperiment from '../../helpers/messages'
+
 import * as createActions from '../../redux/modules/create';
 
 @connect(
@@ -57,11 +59,12 @@ class NewExperiment extends React.Component {
               this.props.setStep(this.props.stepIndex + 1)
             } else {
               // TODO: Send a thing here.
-              console.log("FINISH");
-              console.log(this.props.info)
-              console.log(this.props.variables)
-              console.log(this.props.groups)
-              console.log(this.props.whitelist)
+              ConstructExperiment(
+                this.props.info,
+                this.props.variables,
+                this.props.groups,
+                this.props.whitelist,
+              )
             }
           }}
           style={{marginRight: 12}}

@@ -31,6 +31,7 @@ class Header extends React.Component {
               style={{
                 width: 80,
                 marginTop: 20,
+                marginLeft: 20,
               }}/>
         </Paper>
       </AppBar>
