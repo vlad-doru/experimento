@@ -58,13 +58,13 @@ class NewExperiment extends React.Component {
             if (this.props.stepIndex < 3) {
               this.props.setStep(this.props.stepIndex + 1)
             } else {
-              // TODO: Send a thing here.
-              ConstructExperiment(
-                this.props.info,
-                this.props.variables,
-                this.props.groups,
-                this.props.whitelist,
-              )
+              // TODO: Call an async action dispatcher here.
+              // ConstructExperiment(
+              //   this.props.info,
+              //   this.props.variables,
+              //   this.props.groups,
+              //   this.props.whitelist,
+              // )
             }
           }}
           style={{marginRight: 12}}

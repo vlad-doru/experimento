@@ -3,6 +3,8 @@ package repositories
 import (
 	"github.com/vlad-doru/experimento/backend/data"
 	"golang.org/x/net/context"
+
+	"fmt"
 )
 
 type ImmutableRepository struct {
@@ -15,6 +17,7 @@ func NewImmutableRepository() *ImmutableRepository {
 }
 
 func (repository *ImmutableRepository) SaveExperiment(c context.Context, exp *data.Experiment) (*data.Response, error) {
+	fmt.Printf("Received for %v", exp.Info.Id)
 	_, ok := repository.experiments[exp.Info.Id]
 	if ok == true {
 		return &data.Response{

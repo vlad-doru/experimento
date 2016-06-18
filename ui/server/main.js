@@ -10,9 +10,15 @@ import config from '../config'
 import webpackDevMiddleware from './middleware/webpack-dev'
 import webpackHMRMiddleware from './middleware/webpack-hmr'
 
+import API from './api';
+
 const debug = _debug('app:server')
 const paths = config.utils_paths
 const app = new Koa()
+
+// Add our custom API.
+app.use(API.routes())
+app.use(API.allowedMethods())
 
 // Enable koa-proxy if it has been enabled in the config.
 if (config.proxy && config.proxy.enabled) {
