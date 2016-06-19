@@ -30,7 +30,9 @@ export function getExperiments() {
 }
 
 // Reducer
-const initialState = {}
+const initialState = {
+  data: {},
+}
 export default function reducer(state = initialState, action) {
   switch (action.type) {
     case GET_EXPERIMENT_LIST:

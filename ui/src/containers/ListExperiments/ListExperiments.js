@@ -18,7 +18,7 @@ class ListExperiments extends React.Component {
   render () {
     return (
       <div>
-        Experiment List
+        Expetiments
       </div>
     )
   }
