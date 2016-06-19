@@ -46,7 +46,7 @@ export class ExperimentOverview extends React.Component {
           <strong> Variables: </strong>
           {__.map(variables, (data, name) => {
             return(
-              <div style={{marginLeft: 30}}>
+              <div key={name} style={{marginLeft: 30}}>
                 <strong>#{++vars_index} Var {name}: </strong> {data.options.join(", ")}
               </div>
             )
@@ -57,11 +57,11 @@ export class ExperimentOverview extends React.Component {
           </div>
           {__.map(groups, (data, name) => {
             return(
-              <div style={{marginLeft: 30}}>
+              <div key={name} style={{marginLeft: 30}}>
                 <strong>#{++groups_index} Group {name}</strong>
                   {__.map(data.variables, (value, variable) => {
                     return (
-                      <div style={{marginLeft:30}}>
+                      <div key={variable} style={{marginLeft:30}}>
                         <strong>{variable}: </strong> {value}
                       </div>
                     )
@@ -77,7 +77,7 @@ export class ExperimentOverview extends React.Component {
           {Object.keys(whitelist).length ?
             __.map(whitelist, (group, entity) => {
               return (
-                <div style={{marginLeft: 30}}>
+                <div key={entity} style={{marginLeft: 30}}>
                   <strong>• {entity}</strong> => {group}
                 </div>
             )})
