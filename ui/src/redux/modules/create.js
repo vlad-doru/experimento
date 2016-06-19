@@ -4,7 +4,7 @@ const VARIABLES = 'ui/create/VARIABLES';
 const GROUPS = 'ui/create/GROUPS';
 const WHITELIST = 'ui/create/WHITELIST';
 const STEP_INDEX = 'ui/create/STEP_INDEX';
-const RESET = 'ui/create/RESET';
+const RESET_CREATE = 'ui/create/RESET_CREATE';
 
 // Action Creators
 export function setExperiment(experiment) {
@@ -44,7 +44,7 @@ export function setStep(index) {
 
 export function reset() {
   return {
-    type: RESET,
+    type: RESET_CREATE,
   }
 }
 
@@ -87,8 +87,8 @@ export default function reducer(state = initialState, action) {
         ...state,
         stepIndex: action.index,
       }
-    case RESET: {
-      return {}
+    case RESET_CREATE: {
+      return initialState;
     }
     default:
       return state

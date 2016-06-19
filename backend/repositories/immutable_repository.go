@@ -3,8 +3,6 @@ package repositories
 import (
 	"github.com/vlad-doru/experimento/backend/data"
 	"golang.org/x/net/context"
-
-	"fmt"
 )
 
 type ImmutableRepository struct {

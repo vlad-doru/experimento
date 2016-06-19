@@ -2,8 +2,11 @@ import React from 'react'
 import { connect } from 'react-redux'
 import * as repositoryActions from '../../redux/modules/repository'
 
+import __ from 'lodash';
+
 @connect(
   state => ({
+    data: state.repository.data,
   }),
   repositoryActions)
 class ListExperiments extends React.Component {
@@ -18,7 +21,7 @@ class ListExperiments extends React.Component {
   render () {
     return (
       <div>
-        Expetiments
+        Experiments: {JSON.stringify(Object.keys(this.props.data.experiments))}
       </div>
     )
   }

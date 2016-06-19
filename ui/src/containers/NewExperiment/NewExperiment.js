@@ -15,6 +15,12 @@ import GroupsInfo from '../../components/GroupsInfo'
 import Whitelist from '../../components/Whitelist'
 
 import * as createActions from '../../redux/modules/create';
+import * as repositoryActions from '../../redux/modules/repository';
+
+const actions = {
+  ...createActions,
+  ...repositoryActions,
+}
 
 @connect(
   state => ({
@@ -36,7 +42,7 @@ import * as createActions from '../../redux/modules/create';
 
     stepIndex: state.create.stepIndex,
   }),
-  createActions)
+  actions)
 class NewExperiment extends React.Component {
   constructor(props) {
     super();
@@ -56,13 +62,12 @@ class NewExperiment extends React.Component {
             if (this.props.stepIndex < 3) {
               this.props.setStep(this.props.stepIndex + 1)
             } else {
-              // TODO: Call an async action dispatcher here.
-              // ConstructExperiment(
-              //   this.props.info,
-              //   this.props.variables,
-              //   this.props.groups,
-              //   this.props.whitelist,
-              // )
+              this.props.saveExperiment({
+                info: this.props.info,
+                variables: this.props.variables,
+                groups: this.props.groups,
+                whitelist: this.props.whitelist,
+              })
             }
           }}
           style={{marginRight: 12}}
