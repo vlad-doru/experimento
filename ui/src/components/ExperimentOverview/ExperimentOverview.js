@@ -1,7 +1,8 @@
 import React from 'react'
 import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
-import FlatButton from 'material-ui/FlatButton';
+import RaisedButton from 'material-ui/RaisedButton';
 import Divider from 'material-ui/Divider';
+import ActionDelete from 'material-ui/svg-icons/action/delete';
 
 import Moment from 'moment';
 import __ from 'lodash';
@@ -83,9 +84,18 @@ export class ExperimentOverview extends React.Component {
             )})
           : "No entity has been whitelisted"}
         </CardText>
-        <CardActions expandable={true}>
+        <CardActions expandable={true}
+            style={{height: 55}}>
           // TODO: Delete and inspect results action.
-          <FlatButton label="Action1" />
+          <RaisedButton
+            label="Delete"
+            secondary={true}
+            style={{
+              float: 'right',
+            }}
+            onMouseUp={() =>
+              this.props.onDelete && this.props.onDelete(info.id)}
+            icon={<ActionDelete />}/>
         </CardActions>
       </Card>
     )

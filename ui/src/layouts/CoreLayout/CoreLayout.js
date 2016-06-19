@@ -15,6 +15,7 @@ export const CoreLayout = ({ children }) => (
         maxWidth: 800,
         marginLeft: 'auto',
         marginRight: 'auto',
+        paddingBottom: 10,
       }}>
       <div style={{
         marginTop: 50,

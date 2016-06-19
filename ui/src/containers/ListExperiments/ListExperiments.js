@@ -38,7 +38,10 @@ class ListExperiments extends React.Component {
           /><br/>
         {__.map(this.props.list, (data) => {
            return (
-          <ExperimentOverview key={data.info.id} data={data} />
+          <ExperimentOverview
+              key={data.info.id}
+              data={data}
+              onDelete={(id) => this.props.dropExperiment(id)} />
         )})}
       </div>
     )

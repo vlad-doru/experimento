@@ -35,8 +35,22 @@ export function saveExperiment(data) {
 }
 
 export function dropExperiment(id) {
-  return dispatch => {
-    // Call the API to drop an experiment.
+  return async (dispatch) => {
+    // TODO: Try/catch + snackbar.
+    const response = await API.post({
+      endpoint: '/api/drop',
+      data: {
+        info: {
+          id: id,
+        }
+      },
+    })
+    if (response.ok === true) {
+      // Get all of the experiments again.
+      dispatch(getExperiments());
+      dispatch(createActions.reset())
+      dispatch(replace('/'));
+    }
   }
 }
 
