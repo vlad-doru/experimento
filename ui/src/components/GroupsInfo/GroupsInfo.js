@@ -158,6 +158,7 @@ export class GroupsInfo extends React.Component {
         <List style={{textAlign: 'left'}}>
         {__.map(this.state.groups, (values, key) => (
           <ListItem
+            key={key}
             onTouchTap={() => this._renewGroup(key)}
             style={{
               textAlign: 'left',

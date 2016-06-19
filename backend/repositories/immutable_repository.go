@@ -6,11 +6,11 @@ import (
 )
 
 type ImmutableRepository struct {
-	experiments map[string]data.Experiment
+	experiments map[string]*data.Experiment
 }
 
 func NewImmutableRepository() *ImmutableRepository {
-	experiments := make(map[string]data.Experiment)
+	experiments := make(map[string]*data.Experiment)
 	return &ImmutableRepository{experiments}
 }
 
@@ -22,7 +22,7 @@ func (repository *ImmutableRepository) SaveExperiment(c context.Context, exp *da
 			Error: "There is already an experiment with the given id!",
 		}, nil
 	}
-	repository.experiments[exp.Info.Id] = *exp
+	repository.experiments[exp.Info.Id] = exp
 	return &data.Response{
 		Ok: true,
 	}, nil
@@ -38,7 +38,7 @@ func (repository *ImmutableRepository) DropExperiment(c context.Context, info *d
 func (repository *ImmutableRepository) GetExperiments(context.Context, *data.Void) (*data.Experiments, error) {
 	result := &data.Experiments{Experiments: make(map[string]*data.Experiment)}
 	for key, value := range repository.experiments {
-		result.Experiments[key] = &value
+		result.Experiments[key] = value
 	}
 	return result, nil
 }

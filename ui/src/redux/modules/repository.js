@@ -45,16 +45,14 @@ export function getExperiments() {
     });
     dispatch({
       type: GET_EXPERIMENT_LIST,
-      data: data
+      data: data.experiments,
     })
   }
 }
 
 // Reducer
 const initialState = {
-  data: {
-    experiments: {},
-  },
+  data: {},
 }
 export default function reducer(state = initialState, action) {
   switch (action.type) {

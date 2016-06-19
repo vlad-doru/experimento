@@ -1,6 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import * as repositoryActions from '../../redux/modules/repository'
+import ExperimentOverview from '../../components/ExperimentOverview'
 
 import __ from 'lodash';
 
@@ -21,7 +22,10 @@ class ListExperiments extends React.Component {
   render () {
     return (
       <div>
-        Experiments: {JSON.stringify(Object.keys(this.props.data.experiments))}
+        {__.map(this.props.data, (data, key) => {
+           return (
+          <ExperimentOverview key={key} data={this.props.data[key]} />
+        )})}
       </div>
     )
   }
