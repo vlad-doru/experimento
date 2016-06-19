@@ -11,6 +11,10 @@ class ListExperiments extends React.Component {
     super();
   }
 
+  componentWillMount = () => {
+    this.props.getExperiments();
+  }
+
   render () {
     return (
       <div>
