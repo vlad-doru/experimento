@@ -48,7 +48,7 @@ class Header extends React.Component {
           width={200}
           open={this.state.open}
           onRequestChange={(open) => this.setState({open})}>
-
+          <AppBar showMenuIconButton={false} title="Menu"/>
           {__.map(this.routes, (route) => {
             return (
               <IndexLink key={route.path} to={route.path} style={{
