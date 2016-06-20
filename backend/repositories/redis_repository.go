@@ -1,44 +1,71 @@
 package repositories
 
 import (
+	"github.com/golang/protobuf/proto"
 	"github.com/vlad-doru/experimento/backend/data"
 	"golang.org/x/net/context"
+	"gopkg.in/redis.v3"
 )
 
+const HKEY = "REPOSITORY"
+
 type RedisRepository struct {
-	experiments map[string]*data.Experiment
+	client *redis.Client
 }
 
-func NewRedisRepository() *RedisRepository {
-	experiments := make(map[string]*data.Experiment)
-	return &RedisRepository{experiments}
+func NewRedisRepository(addr, password string) (*RedisRepository, error) {
+	client := redis.NewClient(&redis.Options{
+		Addr:     addr,
+		Password: password,
+		DB:       0, // use default DB
+	})
+
+	_, err := client.Ping().Result()
+	if err != nil {
+		return nil, err
+	}
+	return &RedisRepository{client}, nil
 }
 
 func (repository *RedisRepository) SaveExperiment(c context.Context, exp *data.Experiment) (*data.Response, error) {
-	_, ok := repository.experiments[exp.Info.Id]
-	if ok == true {
-		return &data.Response{
-			Ok:    false,
-			Error: "There is already an experiment with the given id!",
-		}, nil
+	marshalled, err := proto.Marshal(exp)
+	serialized := string(marshalled[:])
+	if err != nil {
+		return nil, err
 	}
-	repository.experiments[exp.Info.Id] = exp
+	err = repository.client.HSet(HKEY, exp.Info.Id, serialized).Err()
+	if err != nil {
+		return nil, err
+	}
 	return &data.Response{
 		Ok: true,
 	}, nil
 }
 
 func (repository *RedisRepository) DropExperiment(c context.Context, info *data.ExperimentInfo) (*data.Response, error) {
-	delete(repository.experiments, info.Id)
+	err := repository.client.HDel(HKEY, info.Id).Err()
+	if err != nil {
+		return nil, err
+	}
 	return &data.Response{
 		Ok: true,
 	}, nil
 }
 
 func (repository *RedisRepository) GetExperiments(context.Context, *data.Void) (*data.Experiments, error) {
-	result := &data.Experiments{Experiments: make(map[string]*data.Experiment)}
-	for key, value := range repository.experiments {
-		result.Experiments[key] = value
+	result := &data.Experiments{
+		Experiments: make(map[string]*data.Experiment),
+	}
+	query, err := repository.client.HGetAll(HKEY).Result()
+	if err != nil {
+		return nil, err
+	}
+	for i := 0; i < len(query)/2; i++ {
+		key := query[2*i]
+		serialized := query[2*i+1]
+		exp := &data.Experiment{}
+		proto.Unmarshal([]byte(serialized), exp)
+		result.Experiments[key] = exp
 	}
 	return result, nil
 }

@@ -7,6 +7,7 @@ import (
 
 	"github.com/urfave/cli"
 	"google.golang.org/grpc"
+	"log"
 	"os"
 )
 
@@ -22,21 +23,28 @@ func main() {
 	app.Usage = "holds information about experiments"
 	app.Version = "v1.0"
 
-	app.Flags = []cli.Flag{
-		cli.IntFlag{
-			Name:  "port",
-			Value: 50051,
-			Usage: "port of the service",
-		},
-	}
-
 	app.Commands = []cli.Command{
 		{
 			Name:    "redis",
 			Aliases: []string{"r"},
 			Usage:   "start a redis based repository service",
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "addr",
+					Value: "",
+					Usage: "address of the redis server",
+				},
+				cli.StringFlag{
+					Name:  "password",
+					Value: "",
+					Usage: "password of the redis server",
+				},
+			},
 			Action: func(c *cli.Context) error {
-				r := repositories.NewRedisRepository()
+				r, err := repositories.NewRedisRepository(c.String("addr"), c.String("password"))
+				if err != nil {
+					log.Fatalf("Fatal Error: %v", err)
+				}
 				start(r, c)
 				return nil
 			},
