@@ -2,6 +2,7 @@
 import CoreLayout from '../layouts/CoreLayout/CoreLayout'
 import NewExperiment from '../containers/NewExperiment'
 import ListExperiments from '../containers/ListExperiments'
+import ExperimentData from '../containers/ExperimentData'
 
 /*  Note: Instead of using JSX, we recommend using react-router
     PlainRoute objects to build route definitions.   */
@@ -17,6 +18,10 @@ export const createRoutes = (store) => ({
        path: '/create',
        component: NewExperiment,
     },
+    {
+      path: '/data/:id',
+      component: ExperimentData,
+    }
   ]
 })
 

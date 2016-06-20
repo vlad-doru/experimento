@@ -18,7 +18,6 @@ export function saveExperiment(data) {
         endpoint: '/api/create',
         data: data,
       })
-      console.log("Response", response)
       if (response.ok === true) {
         // Get all of the experiments again.
         dispatch(getExperiments());

@@ -1,8 +1,11 @@
 import React from 'react'
 import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
+import { Link } from 'react-router'
 import RaisedButton from 'material-ui/RaisedButton';
 import Divider from 'material-ui/Divider';
 import ActionDelete from 'material-ui/svg-icons/action/delete';
+import ActionTrendingUp from 'material-ui/svg-icons/action/trending-up';
+import * as Colors from 'material-ui/styles/colors';
 
 import Moment from 'moment';
 import __ from 'lodash';
@@ -34,15 +37,19 @@ export class ExperimentOverview extends React.Component {
       <Card style={{marginBottom: 10}}>
         <CardHeader
           title={"Experiment: " + info.id}
-          subtitle={this._subtitle(info, variables, groups)}
+          subtitle={
+            <div>
+              {this._subtitle(info, variables, groups)} <br/>
+              Started: {Moment(parseInt(info.started)).format('DD MMMM HH:MM, YYYY')}
+            </div>
+          }
           actAsExpander={true}
           showExpandableButton={true}
         />
         <CardText expandable={true}>
-          <strong>Start date: </strong>
-          {Moment(parseInt(info.started)).format('DD MMMM HH:MM, YYYY')}
-          <br/>
+          <Divider style={{marginBottom: 10}}/>
           <strong>Size: </strong> {info.size * 100 + "%"}<br/>
+          <strong>Seed:</strong> {info.seed_value} <br/>
           <Divider style={{marginTop: 10, marginBottom: 10}}/>
           <strong> Variables: </strong>
           {__.map(variables, (data, name) => {
@@ -67,7 +74,10 @@ export class ExperimentOverview extends React.Component {
                       </div>
                     )
                   })}
-                <Divider style={{marginTop: 10, marginBottom: 10}}/>
+                {groups_index < Object.keys(groups).length ?
+                  (<Divider style={{marginTop: 10, marginBottom: 10}}/>)
+                  : undefined
+                }
               </div>
             )
           })}
@@ -86,16 +96,27 @@ export class ExperimentOverview extends React.Component {
         </CardText>
         <CardActions expandable={true}
             style={{height: 55}}>
-          // TODO: Delete and inspect results action.
           <RaisedButton
             label="Delete"
-            secondary={true}
+            backgroundColor={Colors.red500}
+            labelColor={Colors.white}
             style={{
               float: 'right',
             }}
             onMouseUp={() =>
               this.props.onDelete && this.props.onDelete(info.id)}
             icon={<ActionDelete />}/>
+          <Link to={'/data/' + info.id} style={{
+                  textDecoration: 'none',
+                  float: 'right',
+                  marginRight: 10,
+                }}>
+            <RaisedButton
+              label="Data"
+              backgroundColor={Colors.blue500}
+              labelColor={Colors.white}
+              icon={<ActionTrendingUp />}/>
+          </Link>
         </CardActions>
       </Card>
     )
