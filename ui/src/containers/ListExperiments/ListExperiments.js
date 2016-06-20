@@ -41,6 +41,7 @@ class ListExperiments extends React.Component {
           <ExperimentOverview
               key={data.info.id}
               data={data}
+              actions={true}
               onDelete={(id) => this.props.dropExperiment(id)} />
         )})}
       </div>

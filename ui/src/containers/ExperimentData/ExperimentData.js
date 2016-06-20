@@ -39,7 +39,7 @@ class ExperimentData extends React.Component {
       <div>
 
         <ExperimentOverview data={this.state.data} />
-        <OfflineSimulation data={this.state.data} />
+        <OfflineSimulation data={this.state.data} actions={false}/>
       </div>
     )
   }

@@ -6,10 +6,19 @@ import Divider from 'material-ui/Divider';
 import ActionAssessment from 'material-ui/svg-icons/action/assessment';
 import ActionDone from 'material-ui/svg-icons/action/done';
 import * as Colors from 'material-ui/styles/colors';
+import { connect } from 'react-redux'
+import * as simulationActions from '../../redux/modules/simulation'
+
+import SimulationType from './SimulationType';
 
 import Moment from 'moment';
 import __ from 'lodash';
 
+@connect(
+  state => ({
+    simulation: state.simulation.simulation,
+  }),
+  simulationActions)
 export class OfflineSimulation extends React.Component {
   constructor(props) {
     super();
@@ -38,7 +47,10 @@ export class OfflineSimulation extends React.Component {
         />
         <CardText expandable={true}>
           <Divider style={{marginBottom: 10}}/>
-          TODO: Add the offline simulation
+          <SimulationType
+            onChange={(params) => this.props.setSimulation(params)}
+            simulation={this.props.simulation}
+            groups={groups}/>
         </CardText>
         <CardActions expandable={true}
             style={{height: 55}}>

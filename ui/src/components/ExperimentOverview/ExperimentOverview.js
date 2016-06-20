@@ -94,30 +94,33 @@ export class ExperimentOverview extends React.Component {
             )})
           : "No entity has been whitelisted"}
         </CardText>
-        <CardActions expandable={true}
-            style={{height: 55}}>
-          <RaisedButton
-            label="Delete"
-            backgroundColor={Colors.red500}
-            labelColor={Colors.white}
-            style={{
-              float: 'right',
-            }}
-            onMouseUp={() =>
-              this.props.onDelete && this.props.onDelete(info.id)}
-            icon={<ActionDelete />}/>
-          <Link to={'/data/' + info.id} style={{
-                  textDecoration: 'none',
-                  float: 'right',
-                  marginRight: 10,
-                }}>
+        {this.props.actions ?
+          <CardActions expandable={true}
+              style={{height: 55}}>
             <RaisedButton
-              label="Data"
-              backgroundColor={Colors.blue500}
+              label="Delete"
+              backgroundColor={Colors.red500}
               labelColor={Colors.white}
-              icon={<ActionTrendingUp />}/>
-          </Link>
-        </CardActions>
+              style={{
+                float: 'right',
+              }}
+              onMouseUp={() =>
+                this.props.onDelete && this.props.onDelete(info.id)}
+              icon={<ActionDelete />}/>
+            <Link to={'/data/' + info.id} style={{
+                    textDecoration: 'none',
+                    float: 'right',
+                    marginRight: 10,
+                  }}>
+              <RaisedButton
+                label="Data"
+                backgroundColor={Colors.blue500}
+                labelColor={Colors.white}
+                icon={<ActionTrendingUp />}/>
+            </Link>
+          </CardActions>
+        : <div></div>
+        }
       </Card>
     )
   }
