@@ -28,7 +28,7 @@ export class SimulationType extends React.Component {
   }
 
   _experimentSpecific = (group, field) => {
-    return this.props.id + "_" + group + "_ " + field;
+    return this.props.id + "_" + group + "_" + field;
   }
 
   _changeSpecific = (group, field, value) => {
@@ -67,7 +67,7 @@ export class SimulationType extends React.Component {
         </SelectField>
         <br/>
         {__.map(this.props.groups, (info, name) =>
-        <div style={{display: 'inline-block', marginRight: 10, minWidth: '48.5%'}}>
+        <div key={name} style={{display: 'inline-block', marginRight: 10, minWidth: '48.5%'}}>
           <div style={{fontSize: 16, fontWeight: 'bold', display: 'inline-block', marginTop: 10}}>
             Group {name}
           </div>

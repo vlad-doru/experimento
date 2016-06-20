@@ -22,6 +22,39 @@ import __ from 'lodash';
 export class OfflineSimulation extends React.Component {
   constructor(props) {
     super();
+
+    this.state = {
+      validSimulation: this._validSimulation(props.simulation, props.data),
+    }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      validSimulation: this._validSimulation(nextProps.simulation, nextProps.data),
+    })
+  }
+
+  _validSimulation = (simulation, data) => {
+    const distribution = simulation.distribution;
+    if (distribution == "bernoulli") {
+      return __
+        .chain(data.groups_info)
+        .map((group, name) => {
+          return Boolean(simulation[data.info.id + "_" + name + "_" + distribution])
+        })
+        .min()
+        .value();
+    } else if (distribution == "normal") {
+      return __
+        .chain(data.groups_info)
+        .map((group, name) => {
+          return Boolean(simulation[data.info.id + "_" + name + "_normalMean"]) &&
+                 Boolean(simulation[data.info.id + "_" + name + "_normalSD"]);
+        })
+        .min()
+        .value();
+    }
+    return false;
   }
 
   render () {
@@ -50,12 +83,14 @@ export class OfflineSimulation extends React.Component {
           <SimulationType
             onChange={(params) => this.props.setSimulation(params)}
             simulation={this.props.simulation}
+            id={info.id}
             groups={groups}/>
         </CardText>
         <CardActions expandable={true}
             style={{height: 55}}>
           <RaisedButton
             label="Simulate"
+            disabled={!this.state.validSimulation}
             backgroundColor={Colors.blue500}
             labelColor={Colors.white}
             style={{
