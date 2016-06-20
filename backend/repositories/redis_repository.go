@@ -5,16 +5,16 @@ import (
 	"golang.org/x/net/context"
 )
 
-type ImmutableRepository struct {
+type RedisRepository struct {
 	experiments map[string]*data.Experiment
 }
 
-func NewImmutableRepository() *ImmutableRepository {
+func NewRedisRepository() *RedisRepository {
 	experiments := make(map[string]*data.Experiment)
-	return &ImmutableRepository{experiments}
+	return &RedisRepository{experiments}
 }
 
-func (repository *ImmutableRepository) SaveExperiment(c context.Context, exp *data.Experiment) (*data.Response, error) {
+func (repository *RedisRepository) SaveExperiment(c context.Context, exp *data.Experiment) (*data.Response, error) {
 	_, ok := repository.experiments[exp.Info.Id]
 	if ok == true {
 		return &data.Response{
@@ -28,14 +28,14 @@ func (repository *ImmutableRepository) SaveExperiment(c context.Context, exp *da
 	}, nil
 }
 
-func (repository *ImmutableRepository) DropExperiment(c context.Context, info *data.ExperimentInfo) (*data.Response, error) {
+func (repository *RedisRepository) DropExperiment(c context.Context, info *data.ExperimentInfo) (*data.Response, error) {
 	delete(repository.experiments, info.Id)
 	return &data.Response{
 		Ok: true,
 	}, nil
 }
 
-func (repository *ImmutableRepository) GetExperiments(context.Context, *data.Void) (*data.Experiments, error) {
+func (repository *RedisRepository) GetExperiments(context.Context, *data.Void) (*data.Experiments, error) {
 	result := &data.Experiments{Experiments: make(map[string]*data.Experiment)}
 	for key, value := range repository.experiments {
 		result.Experiments[key] = value

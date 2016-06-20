@@ -1,4 +1,4 @@
-package service
+package experimento
 
 import (
 	"github.com/vlad-doru/experimento/backend/data"
@@ -28,10 +28,6 @@ func NewExperimentoService(
 	return &ExperimentoService{repository, store, assigner}
 }
 
-// GetAllVariables returns all the variables associated to an entity_id.
-// We only expose this function so that we encourage calling this function only once.
-// Had we exposed a GetExperimentVariables(exp_id) people would have proabably
-// chosen to call that multiple times, which would hurt the performance.
 func (service *ExperimentoService) GetAllVariables(entityID string) (Variables, error) {
 	// First we get all the existing experiments.
 	experiments, err := service.repository.GetExperiments()
@@ -64,7 +60,7 @@ func (service *ExperimentoService) GetAllVariables(entityID string) (Variables, 
 		validExperiments++
 		go func(id string, desc data.Experiment) {
 			// Get the variable then send it through the channel.
-			vars, err := service.getVariables(entityID, desc)
+			vars, err := service.GetVariables(entityID, desc)
 			c <- &expVar{id, vars, err}
 		}(id, exp)
 	}
@@ -82,7 +78,7 @@ func (service *ExperimentoService) GetAllVariables(entityID string) (Variables, 
 	return result, nil
 }
 
-func (service *ExperimentoService) getVariables(entityID string, exp data.Experiment) (map[string]string, error) {
+func (service *ExperimentoService) GetVariables(entityID string, exp data.Experiment) (map[string]string, error) {
 	var groupID string
 	var err error
 	groupID, err = service.store.GetExperimentGroup(entityID, exp.Info.Id)

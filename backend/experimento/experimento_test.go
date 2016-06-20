@@ -1,4 +1,4 @@
-package service_test
+package experimento_test
 
 import (
 	"github.com/stretchr/testify/assert"

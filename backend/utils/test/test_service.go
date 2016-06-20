@@ -9,7 +9,7 @@ import (
 
 	"math/rand"
 
-	"github.com/vlad-doru/experimento/backend/service"
+	"github.com/vlad-doru/experimento/backend/experimento"
 )
 
 // ExpTestSeed allows to change the seed of the test experiment.
@@ -64,13 +64,13 @@ func GetDefaultExperimentDescription() (data.Experiment, error) {
 // GetBasicABService allows us to get an Experimento service using A/B testing
 // that will be useful for testing. GetBasicABService(0) has just the simple
 // configuration, without any other random experiment configured.
-func GetBasicABService(n int) (*service.ExperimentoService, error) {
+func GetBasicABService(n int) (*experimento.ExperimentoService, error) {
 	return GetTestingService(assigners.NewBasicAB(), n)
 }
 
 // GetBanditTestingService allows us to get an Experimento service using
 // a multi arm bandit assigner, using the aggregator specified in the argument.
-func GetBanditTestingService(agg interfaces.Aggregator, n int) (*service.ExperimentoService, error) {
+func GetBanditTestingService(agg interfaces.Aggregator, n int) (*experimento.ExperimentoService, error) {
 	bandit, err := assigners.NewProbBandit(agg, BanditHoldoutSize)
 	if err != nil {
 		return nil, err
@@ -80,7 +80,7 @@ func GetBanditTestingService(agg interfaces.Aggregator, n int) (*service.Experim
 
 // GetTestingService allows us to get an experimento service for testing, using
 // the specified assigner.
-func GetTestingService(assigner interfaces.Assigner, n int) (*service.ExperimentoService, error) {
+func GetTestingService(assigner interfaces.Assigner, n int) (*experimento.ExperimentoService, error) {
 	repository := repositories.NewMemoryRepository()
 	store := stores.NewMemoryStore()
 	desc, err := GetDefaultExperimentDescription()
@@ -123,5 +123,5 @@ func GetTestingService(assigner interfaces.Assigner, n int) (*service.Experiment
 			return nil, err
 		}
 	}
-	return service.NewExperimentoService(repository, store, assigner), nil
+	return experimento.NewExperimentoService(repository, store, assigner), nil
 }
