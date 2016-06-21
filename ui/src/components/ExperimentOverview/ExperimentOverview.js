@@ -19,7 +19,7 @@ export class ExperimentOverview extends React.Component {
     const percent = info.size * 100;
     const groups_count = Object.keys(groups).length;
     const vars_count = Object.keys(vars).length;
-    return "Size " + percent + "%, " +
+    return "Size " + Math.round(percent) + "%, " +
            groups_count + " groups, " +
            vars_count + (vars_count == 1 ? " variable" : " variables")
   }
@@ -48,7 +48,6 @@ export class ExperimentOverview extends React.Component {
         />
         <CardText expandable={true}>
           <Divider style={{marginBottom: 10}}/>
-          <strong>Size: </strong> {info.size * 100 + "%"}<br/>
           <strong>Seed:</strong> {info.seed_value} <br/>
           <Divider style={{marginTop: 10, marginBottom: 10}}/>
           <strong> Variables: </strong>

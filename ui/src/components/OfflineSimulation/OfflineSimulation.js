@@ -8,13 +8,15 @@ import ActionDone from 'material-ui/svg-icons/action/done';
 import * as Colors from 'material-ui/styles/colors';
 import { connect } from 'react-redux'
 import * as simulationActions from '../../redux/modules/simulation'
+const LineChart = require("react-chartjs").Line;
+
 
 import SimulationType from './SimulationType';
 
 import Moment from 'moment';
 import __ from 'lodash';
 
-const MAX_SAMPLES = 10000;
+const MAX_SAMPLES = 15000 + 1;
 
 @connect(
   state => ({
@@ -26,8 +28,14 @@ export class OfflineSimulation extends React.Component {
     super();
 
     this.state = {
-      validSimulation: this._validSimulation(props.simulation, props.data),
+      validSimulation: false,
     }
+  }
+
+  componentDidMount() {
+    this.setState({
+      validSimulation: this._validSimulation(this.props.simulation, this.props.data),
+    })
   }
 
   componentWillReceiveProps(nextProps) {
@@ -38,18 +46,48 @@ export class OfflineSimulation extends React.Component {
 
   _constructData = (simulation, generated) => {
     const assigner = simulation.assigner;
-    console.log(generated);
-    const labels = __.times(MAX_SAMPLES / 100, (x) => x * 100 + 100);
-    let datasets = {};
+
+    const groups = Object.keys(generated);
     const groups_count = Object.keys(generated).length;
+    let colors = [Colors.blue500, Colors.lightGreen500, Colors.teal500,
+              Colors.lime500, Colors.amber500, Colors.orange500]
+
+    let picked_stats = {};
+    let datasets = [];
+    __.times(groups_count, (i) => {
+      picked_stats[i] = 0;
+      datasets.push({
+        data:[],
+        label: groups[i],
+        fillColor: "transparent",
+        strokeColor: colors[i],
+        pointColor: colors[i],
+      })
+    })
+    let picked = []
+    let labels = []
+
     if (assigner == "ab") {
       // Make A/B Assignments over here.
       __.times(MAX_SAMPLES, (x) => {
-        if (x% 1000 == 0) {
-          console.log(x);
+        const i = __.random(0, groups_count - 1);
+        picked.push(generated[groups[i]][x])
+        picked_stats[i] += 1
+        if (x && x % 1000 == 0) {
+          labels.push((x / 1000) + "K")
+          __.times(groups_count, (i) => {
+            datasets[i].data.push(Math.round(1000 * picked_stats[i] / x) / 10)
+          })
         }
       })
     }
+    console.log(picked);
+    console.log(__.mean(picked));
+    console.log(datasets);
+    this.setState({chartData: {
+      datasets,
+      labels,
+    }})
   }
 
   _validSimulation = (simulation, data) => {
@@ -66,7 +104,7 @@ export class OfflineSimulation extends React.Component {
         let generated = __.mapValues(data.groups_info,
           (group, name) => {
             const prob = simulation[data.info.id + "_" + name + "_" + distribution];
-            return __.times(MAX_SAMPLES, () => Math.random() < prob)
+            return __.times(MAX_SAMPLES, () => Number(Math.random() < prob))
           }
         )
         this._constructData(simulation, generated)
@@ -95,7 +133,7 @@ export class OfflineSimulation extends React.Component {
     let groups_index = 0;
 
     return (
-      <Card style={{marginBottom: 10}}>
+      <Card style={{marginBottom: 10}} initiallyExpanded={true}>
         <CardHeader
           title={"Offline Simulation"}
           avatar={
@@ -113,6 +151,26 @@ export class OfflineSimulation extends React.Component {
             simulation={this.props.simulation}
             id={info.id}
             groups={groups}/>
+
+          <Divider style={{marginBottom: 10}}/>
+
+          {this.state.chartData ?
+            <LineChart
+              data={this.state.chartData}
+              options={{
+                legend: {
+                  display: true,
+                },
+                title: {
+                  display: true,
+                  text: "Groups Ratio"
+                }
+              }}
+              width="700"
+              height="250"/>
+            : <div></div>
+          }
+
         </CardText>
         <CardActions expandable={true}
             style={{height: 55}}>

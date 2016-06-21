@@ -91,7 +91,6 @@ export class SimulationType extends React.Component {
                 onChange={(evt, value) => this._changeSpecific(name, "normalMean", value)}
               />
             <TextField
-                style={{marginLeft: 10}}
                 hintText="Normal SD"
                 fullWidth={true}
                 value={this.props.simulation[this._experimentSpecific(name, 'normalSD')]}

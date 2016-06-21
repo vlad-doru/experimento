@@ -93,7 +93,7 @@
     "babel-runtime": "^6.3.19",
     "better-npm-run": "0.0.8",
     "bluebird": "^3.4.1",
-    "chart.js": "^2.1.6",
+    "chart.js": "1.1.1",
     "css-loader": "^0.23.0",
     "cssnano": "^3.3.2",
     "debug": "^2.2.0",
