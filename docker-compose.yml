@@ -2,14 +2,20 @@ version: '2'
 services:
   ui:
     build: ./ui
+    command: npm run deploy && npm start
     environment:
      - REPOSITORY_ADDR=repository:50051
+     - NODE_ENV=production
     ports:
      - "3000:3000"
+    depends_on:
+     - repository
   repository:
     build:
       context: ./backend
       dockerfile: ./repositories/service/Dockerfile
+    ports:
+     - "50051:50051"
     depends_on:
      - redis
   redis:
