@@ -14,6 +14,8 @@ import SimulationType from './SimulationType';
 import Moment from 'moment';
 import __ from 'lodash';
 
+const MAX_SAMPLES = 10000;
+
 @connect(
   state => ({
     simulation: state.simulation.simulation,
@@ -34,16 +36,42 @@ export class OfflineSimulation extends React.Component {
     })
   }
 
+  _constructData = (simulation, generated) => {
+    const assigner = simulation.assigner;
+    console.log(generated);
+    const labels = __.times(MAX_SAMPLES / 100, (x) => x * 100 + 100);
+    let datasets = {};
+    const groups_count = Object.keys(generated).length;
+    if (assigner == "ab") {
+      // Make A/B Assignments over here.
+      __.times(MAX_SAMPLES, (x) => {
+        if (x% 1000 == 0) {
+          console.log(x);
+        }
+      })
+    }
+  }
+
   _validSimulation = (simulation, data) => {
     const distribution = simulation.distribution;
     if (distribution == "bernoulli") {
-      return __
+      let valid =  __
         .chain(data.groups_info)
         .map((group, name) => {
           return Boolean(simulation[data.info.id + "_" + name + "_" + distribution])
         })
         .min()
         .value();
+      if (valid) {
+        let generated = __.mapValues(data.groups_info,
+          (group, name) => {
+            const prob = simulation[data.info.id + "_" + name + "_" + distribution];
+            return __.times(MAX_SAMPLES, () => Math.random() < prob)
+          }
+        )
+        this._constructData(simulation, generated)
+      }
+      return valid;
     } else if (distribution == "normal") {
       return __
         .chain(data.groups_info)
