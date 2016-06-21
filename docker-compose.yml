@@ -1,11 +1,15 @@
 version: '2'
 services:
+  ui:
+    build: ./ui
+    environment:
+     - REPOSITORY_ADDR=repository:50051
+    ports:
+     - "3000:3000"
   repository:
     build:
       context: ./backend
       dockerfile: ./repositories/service/Dockerfile
-    ports:
-     - "50051:50051"
     depends_on:
      - redis
   redis:
