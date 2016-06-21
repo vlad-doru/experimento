@@ -17,7 +17,7 @@ import SimulationType from './SimulationType';
 import Moment from 'moment';
 import __ from 'lodash';
 
-const MAX_SAMPLES = 15000 + 1;
+const MAX_SAMPLES = 8000 + 1;
 
 @connect(
   state => ({
@@ -60,18 +60,26 @@ export class OfflineSimulation extends React.Component {
 
     let groupPicked = {};
     let groupMeans = [];
-    let datasets = [];
-    __.times(groups_count, (i) => {
-      groupPicked[i] = 0;
-      groupMeans[i] = 1;
-      datasets.push({
+    let ratioDatasets = [];
+    let meansDatasets = [];
+    let newDataset = (i, label) => {
+      return {
         data:[],
-        label: groups[i],
+        label: label || groups[i],
         fillColor: "transparent",
         strokeColor: colors[i],
         pointColor: colors[i],
-      })
+      }
+    };
+    __.times(groups_count, (i) => {
+      groupPicked[i] = 0;
+      groupMeans[i] = 1;
+      ratioDatasets.push(newDataset(i))
+      meansDatasets.push(newDataset(i))
     })
+    // Push for aggregate.
+    meansDatasets.push(newDataset(groups_count, "Aggregate"))
+
     let labels = []
     let assign
 
@@ -137,6 +145,8 @@ export class OfflineSimulation extends React.Component {
       ...groupMeans,
     ]
 
+    let aggregateMean = 0
+
     __.times(MAX_SAMPLES, (x) => {
       // Pick the group
       const i = assign(groups_count, updatedMeans)
@@ -145,13 +155,18 @@ export class OfflineSimulation extends React.Component {
       // Increment number of elements picked.
       groupPicked[i] += 1
       groupMeans[i] += (value - groupMeans[i])/groupPicked[i]
+      aggregateMean += (value - aggregateMean)/(x + 1)
 
       // Push to graph every 1K steps.
-      if (x && x % 1000 == 0) {
+      if (x && x % 500 == 0) {
         labels.push((x / 1000) + "K")
         __.times(groups_count, (i) => {
-          datasets[i].data.push(Math.round(1000 * groupPicked[i] / x) / 1000)
+          ratioDatasets[i].data.push(Math.round(1000 * groupPicked[i] / x) / 1000)
         })
+        __.times(groups_count, (i) => {
+          meansDatasets[i].data.push(groupMeans[i])
+        })
+        meansDatasets[groups_count].data.push(aggregateMean)
         // Update the means
         updatedMeans = [
           ...groupMeans,
@@ -159,44 +174,61 @@ export class OfflineSimulation extends React.Component {
       }
     })
     this.setState({
-      chartData: {
-        datasets,
+      ratioData: {
+        datasets: ratioDatasets,
         labels,
+      },
+      meansData: {
+        datasets: meansDatasets,
+        labels: [...labels, "Aggregate"],
       },
     })
   }
 
   _validSimulation = (simulation, data) => {
     const distribution = simulation.distribution;
+    let validation
+    let generation
+
     if (distribution == "bernoulli") {
-      let valid =  __
-        .chain(data.groups_info)
-        .map((group, name) => {
-          return Boolean(simulation[data.info.id + "_" + name + "_" + distribution])
-        })
-        .min()
-        .value();
-      if (valid) {
-        let generated = __.mapValues(data.groups_info,
-          (group, name) => {
-            const prob = simulation[data.info.id + "_" + name + "_" + distribution];
-            return __.times(MAX_SAMPLES, () => Number(Math.random() < prob))
-          }
-        )
-        this._constructData(simulation, generated)
+      validation = (name) => Boolean(simulation[data.info.id + "_" + name + "_bernoulli"])
+      generation = (name) => {
+        const prob = simulation[data.info.id + "_" + name + "_bernoulli"];
+        return Number(Math.random() < prob)
       }
-      return valid;
     } else if (distribution == "normal") {
-      return __
-        .chain(data.groups_info)
-        .map((group, name) => {
+      validation = (name) => {
           return Boolean(simulation[data.info.id + "_" + name + "_normalMean"]) &&
                  Boolean(simulation[data.info.id + "_" + name + "_normalSD"]);
-        })
-        .min()
-        .value();
+      }
+      generation = (name) => {
+        const mu = simulation[data.info.id + "_" + name + "_normalMean"];
+        const sigma = simulation[data.info.id + "_" + name + "_normalSD"];
+        const u = 1 - Math.random(); // Subtraction to flip [0, 1) to (0, 1].
+        const v = 1 - Math.random();
+        const std_normal = Math.sqrt( -2.0 * Math.log( u ) ) *
+                           Math.cos( 2.0 * Math.PI * v );
+        return std_normal * Number(sigma) + Number(mu)
+      }
+    } else {
+      return false
     }
-    return false;
+
+    // Validation + generation.
+    let valid =  __
+      .chain(data.groups_info)
+      .map((_, name) => validation(name))
+      .min()
+      .value();
+    if (valid) {
+      let generated = __.mapValues(data.groups_info,
+        (_, name) => {
+          return __.times(MAX_SAMPLES, () => generation(name))
+        }
+      )
+      this._constructData(simulation, generated)
+    }
+    return valid
   }
 
   render () {
@@ -238,24 +270,31 @@ export class OfflineSimulation extends React.Component {
               Groups ratio
             </div>
             <LineChart
-              ref="ratioChart"
-              data={this.state.chartData}
-              options={{
-                legend: {
-                  display: true,
-                },
-                title: {
-                  display: true,
-                  text: "Groups Ratio"
-                },
-              }}
+              data={this.state.ratioData}
               width="700"
               height="250"/>
-            <ChartLegend datasets={this.state.chartData.datasets}/>
+            <ChartLegend datasets={this.state.ratioData.datasets}/>
             </div>
             : <div></div>
           }
 
+          {this.state.validSimulation ?
+            <div>
+            <div style={{
+                fontWeight: 'bold',
+                fontSize: 16,
+                textAlign: 'center',
+                marginTop: 10,}}>
+              Aggregate Metric
+            </div>
+            <LineChart
+              data={this.state.meansData}
+              width="700"
+              height="250"/>
+            <ChartLegend datasets={this.state.meansData.datasets}/>
+            </div>
+            : <div></div>
+          }
         </CardText>
       </Card>
     )

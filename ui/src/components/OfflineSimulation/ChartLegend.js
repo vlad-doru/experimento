@@ -8,8 +8,8 @@ var ChartLegend = React.createClass({
   },
 
   render: function () {
-    var datasets = __.map(this.props.datasets, (ds) =>
-        <div style={{
+    var datasets = __.map(this.props.datasets, (ds, idx) =>
+        <div key={idx} style={{
           fontWeight: 'bold',
           textAlign: 'center',
           color: ds.strokeColor,

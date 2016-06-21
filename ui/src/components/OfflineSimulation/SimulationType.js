@@ -90,7 +90,8 @@ export class SimulationType extends React.Component {
                 floatingLabelText="Normal Mean"
                 onChange={(evt, value) => this._changeSpecific(name, "normalMean", value)}
               />
-            <TextField
+              <br/>
+              <TextField
                 hintText="Normal SD"
                 fullWidth={true}
                 value={this.props.simulation[this._experimentSpecific(name, 'normalSD')]}
