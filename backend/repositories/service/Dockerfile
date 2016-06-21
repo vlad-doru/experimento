@@ -2,6 +2,9 @@ FROM golang:1.6
 
 ADD . /go/src/github.com/vlad-doru/experimento/backend
 
-RUN go install github.com/golang/vlad-doru/experimento/backend
+WORKDIR /go/src/github.com/vlad-doru/experimento/backend
 
-CMD go run /go/src/github.com/vlad-doru/experimento/backend/repositories/service/main.go -- redis --addr=":6367"
+RUN go get github.com/tools/godep
+RUN godep restore ./...
+
+CMD go run ./repositories/service/main.go -- redis --addr="redis:6379"
