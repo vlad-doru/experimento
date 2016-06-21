@@ -7,4 +7,6 @@ WORKDIR /go/src/github.com/vlad-doru/experimento/backend
 RUN go get github.com/tools/godep
 RUN godep restore ./...
 
+EXPOSE 50051
+
 CMD go run ./repositories/service/main.go -- redis --addr="redis:6379"

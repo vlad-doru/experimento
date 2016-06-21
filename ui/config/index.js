@@ -14,6 +14,9 @@ debug('Creating default configuration.')
 const config = {
   env : process.env.NODE_ENV || 'development',
 
+  // Microservices ENV variables
+  repository : process.env.REPOSITORY_ADDR || '0.0.0.0:50051',
+
   // ----------------------------------
   // Project Structure
   // ----------------------------------

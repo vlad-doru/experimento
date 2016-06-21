@@ -4,11 +4,14 @@ var grpc = require('grpc');
 var util = require('util');
 var thunkify = require('thunkify');
 var Promise = require('bluebird')
+
+import config from '../../config';
+
 import __ from 'lodash';
 
 const PROTO_PATH = __dirname + '/proto/messages.proto';
 var data = grpc.load(PROTO_PATH).data;
-var client = new data.Repository('0.0.0.0:50051', grpc.credentials.createInsecure());
+var client = new data.Repository(config.repository, grpc.credentials.createInsecure());
 Promise.promisifyAll(client);
 
 function ConstructExperiment(body) {

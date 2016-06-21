@@ -2,7 +2,7 @@ version: '2'
 services:
   repository:
     build:
-      context: .
+      context: ./backend
       dockerfile: ./repositories/service/Dockerfile
     ports:
      - "50051:50051"
@@ -12,4 +12,4 @@ services:
     image: redis
     command: redis-server --appendonly yes
     volumes:
-     - ./volumes:/data
+     - ./backend/volumes:/data
