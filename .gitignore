@@ -25,3 +25,6 @@ _testmain.go
 
 .imdone
 benchmarks/
+.DS_Store
+npm-debug.log
+
