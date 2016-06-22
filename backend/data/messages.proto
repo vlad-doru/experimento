@@ -33,9 +33,28 @@ message Experiment {
 	repeated string sorted_group_ids = 7;
 }
 
+message Response {
+	bool ok = 1;
+	string error = 2;
+}
+
+/************ REPOSITORY **********/
+
+message Void {}
+
 message Experiments {
 	map<string, Experiment> experiments = 1;
 }
+
+service Repository {
+  rpc SaveExperiment (Experiment) returns(Response);
+	rpc DropExperiment (ExperimentInfo) returns(Response);
+	rpc GetExperiments (Void) returns (Experiments);
+	rpc GetExperiment  (ExperimentInfo) returns(Experiment);
+}
+
+
+/************ STORE ***************/
 
 message StoreMessage {
 	string experiment_id = 1;
@@ -43,20 +62,32 @@ message StoreMessage {
 	string group_id = 3;
 }
 
-message Response {
-	bool ok = 1;
-	string error = 2;
-}
-
-message Void {}
-
-service Repository {
-  rpc SaveExperiment (Experiment) returns(Response);
-	rpc DropExperiment (ExperimentInfo) returns(Response);
-	rpc GetExperiments (Void) returns (Experiments);
-}
 
 service Store {
 	rpc SetExperimentGroup (StoreMessage) returns(Response);
 	rpc GetExperimentGroup (StoreMessage) returns(StoreMessage);
+}
+
+/************ EXPERIMENTO ********/
+
+message QueryAll {
+	string entity_id = 1;
+}
+
+message QueryExperiment {
+	string entity_id = 1;
+	ExperimentInfo info = 1;
+}
+
+message Variables {
+	map<string, string> variable_values = 1;
+}
+
+message AllVariables {
+	map<string, Variables> exp_variables = 1;
+}
+
+service Experimento {
+	rpc GetAllVariables(QueryAll) returns (AllVariables);
+	rpc GetVariables(QueryExperiment) returns (Variables);
 }
