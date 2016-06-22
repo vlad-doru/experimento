@@ -28,12 +28,16 @@ func NewRedisRepository(addr, password string) (*RedisRepository, error) {
 }
 
 func (repository *RedisRepository) SaveExperiment(c context.Context, exp *data.Experiment) (*data.Response, error) {
-	marshalled, err := proto.Marshal(exp)
+	e, err := data.NewExperiment(exp.Info, exp.VariablesInfo, exp.GroupsInfo, exp.Whitelist)
+	if err != nil {
+		return nil, err
+	}
+	marshalled, err := proto.Marshal(&e)
 	serialized := string(marshalled[:])
 	if err != nil {
 		return nil, err
 	}
-	err = repository.client.HSet(HKEY, exp.Info.Id, serialized).Err()
+	err = repository.client.HSet(HKEY, e.Info.Id, serialized).Err()
 	if err != nil {
 		return nil, err
 	}

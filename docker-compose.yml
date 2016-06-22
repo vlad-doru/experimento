@@ -10,6 +10,19 @@ services:
      - "3000:3000"
     depends_on:
      - repository
+  experimento:
+    build:
+      context: ./backend
+      dockerfile: ./experimento/service/Dockerfile
+    environment:
+     - STORE_ADDR=store:50051
+     - REPOSITORY_ADDR=repository:50051
+     - SERVICE_PORT=50051
+    ports:
+     - "50051:50051"
+    depends_on:
+     - repository
+     - store
   repository:
     build:
       context: ./backend
@@ -17,8 +30,15 @@ services:
     environment:
      - REDIS_ADDR=redis:6379
      - SERVICE_PORT=50051
-    ports:
-     - "50051:50051"
+    depends_on:
+     - redis
+  store:
+    build:
+      context: ./backend
+      dockerfile: ./stores/service/Dockerfile
+    environment:
+     - REDIS_ADDR=redis:6379
+     - SERVICE_PORT=50051
     depends_on:
      - redis
   redis:
