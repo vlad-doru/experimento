@@ -16,6 +16,7 @@ func NewApp() *cli.App {
 			Name:  "port",
 			Value: 50051,
 			Usage: "port of the service",
+			EnvVar: "SERVICE_PORT",
 		},
 	}
 	return app

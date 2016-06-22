@@ -14,6 +14,9 @@ services:
     build:
       context: ./backend
       dockerfile: ./repositories/service/Dockerfile
+    environment:
+     - REDIS_ADDR=redis:6379
+     - SERVICE_PORT=50051
     ports:
      - "50051:50051"
     depends_on:

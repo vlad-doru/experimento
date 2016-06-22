@@ -33,11 +33,13 @@ func main() {
 					Name:  "addr",
 					Value: "",
 					Usage: "address of the redis server",
+					EnvVar: "REDIS_ADDR",
 				},
 				cli.StringFlag{
 					Name:  "password",
 					Value: "",
 					Usage: "password of the redis server",
+					EnvVar: "REDIS_PASSWD",
 				},
 			},
 			Action: func(c *cli.Context) error {
