@@ -13,6 +13,8 @@ const PROTO_PATH = __dirname + '/proto/messages.proto';
 var data = grpc.load(PROTO_PATH).data;
 var client = new data.Repository(config.repository, grpc.credentials.createInsecure());
 Promise.promisifyAll(client);
+var experimento = new data.Experimento(config.experimento, grpc.credentials.createInsecure());
+Promise.promisifyAll(experimento);
 
 function ConstructExperiment(body) {
   const info = body.info;
@@ -53,6 +55,23 @@ router.post('/api/drop', koaBody, function *(next) {
 router.get('/api/list', koaBody, function *(next) {
     var response = yield client.getExperimentsAsync(this.request.body.info)
     this.body = response;
+});
+
+router.post('/api/query', koaBody, function *(next) {
+    const entities = this.request.body.entities
+    const id = this.request.body.id
+    let promises = __.chain(entities)
+      .map((entity) =>
+        experimento.getVariablesAsync({
+          entity_id: entity,
+          info: {
+            id: id,
+          }
+        })
+      )
+      .value()
+    let results = yield Promise.all(promises);
+    this.body = __.zipObject(entities, results);
 });
 
 export default router;

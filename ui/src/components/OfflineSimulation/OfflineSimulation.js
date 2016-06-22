@@ -241,7 +241,7 @@ export class OfflineSimulation extends React.Component {
     let groups_index = 0;
 
     return (
-      <Card style={{marginBottom: 10}} initiallyExpanded={true}>
+      <Card style={{marginBottom: 10}}>
         <CardHeader
           title={"Offline Simulation"}
           avatar={

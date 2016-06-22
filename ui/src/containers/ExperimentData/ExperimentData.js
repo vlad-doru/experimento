@@ -4,6 +4,7 @@ import * as repositoryActions from '../../redux/modules/repository'
 
 import ExperimentOverview from '../../components/ExperimentOverview'
 import OfflineSimulation from '../../components/OfflineSimulation'
+import ExperimentExample from '../../components/ExperimentExample'
 
 import __ from 'lodash';
 
@@ -40,6 +41,7 @@ class ExperimentData extends React.Component {
 
         <ExperimentOverview data={this.state.data} />
         <OfflineSimulation data={this.state.data} actions={false}/>
+        <ExperimentExample data={this.state.data} />
       </div>
     )
   }
