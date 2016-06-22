@@ -52,7 +52,7 @@ func (repository *RedisRepository) DropExperiment(c context.Context, info *data.
 	}, nil
 }
 
-func (repository *RedisRepository) GetExperiments(context.Context, *data.Void) (*data.Experiments, error) {
+func (repository *RedisRepository) GetExperiments(c context.Context, v *data.Void) (*data.Experiments, error) {
 	result := &data.Experiments{
 		Experiments: make(map[string]*data.Experiment),
 	}
@@ -68,4 +68,14 @@ func (repository *RedisRepository) GetExperiments(context.Context, *data.Void) (
 		result.Experiments[key] = exp
 	}
 	return result, nil
+}
+
+func (repository *RedisRepository) GetExperiment(c context.Context, info *data.ExperimentInfo) (*data.Experiment, error) {
+	serialized, err := repository.client.HGet(HKEY, info.Id).Result()
+	if err != nil {
+		return nil, err
+	}
+	exp := &data.Experiment{}
+	proto.Unmarshal([]byte(serialized), exp)
+	return exp, nil
 }
