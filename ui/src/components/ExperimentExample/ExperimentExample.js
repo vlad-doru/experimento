@@ -15,6 +15,7 @@ import __ from 'lodash';
 @connect(
   state => ({
     examples: state.examples.examples,
+    results: state.examples.results,
   }),
   examplesActions)
 export class VariableInfo extends React.Component {
@@ -28,6 +29,7 @@ export class VariableInfo extends React.Component {
 
     const info = this.props.data.info;
     const examples = this.props.examples[info.id];
+    const results = this.props.results[info.id];
 
     return (
       <div>
@@ -52,7 +54,26 @@ export class VariableInfo extends React.Component {
             rowsMax={10}
             value={examples}
             onChange={(e, input) => this.props.setExamples(info.id, input)}
-            /><br />
+            /><br/>
+          {__.map(results, (result, entity) => {
+            return (
+              <div style={{marginTop: 10,}} key={entity}>
+                <strong> {entity} => Group {result.variable_values.group} </strong> <br/>
+                {__.map(result.variable_values, (value, variable) => {
+                  if (variable == 'group') {
+                    return (<div></div>)
+                  }
+                  return (
+                    <div style={{
+                      marginLeft: 32,
+                      marginTop: 5,
+                      color: Colors.lightBlack,
+                    }} key={variable}> * Variable {variable}: {value} </div>
+                  )
+                })}
+              </div>
+            )}
+          )}
         </CardText>
         <CardActions expandable={true}
             style={{height: 55}}>

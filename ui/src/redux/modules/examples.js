@@ -4,6 +4,7 @@ import __ from 'lodash';
 
 // constants
 const EXAMPLES_EXP = 'ui/simulation/EXAMPLES_EXP';
+const EXAMPLES_RESULTS = 'ui/simulation/EXAMPLES_RESULTS';
 
 // Action Creators
 export function setExamples(exp, examples) {
@@ -11,6 +12,14 @@ export function setExamples(exp, examples) {
     type: EXAMPLES_EXP,
     exp: exp,
     examples: examples,
+  }
+}
+
+export function setResults(results, id) {
+  return {
+    type: EXAMPLES_RESULTS,
+    id: id,
+    results: results,
   }
 }
 
@@ -25,7 +34,7 @@ export function queryExamples(examples, id) {
           id,
         },
       })
-      console.log(response);
+      dispatch(setResults(response, id))
     } catch (e) {
       // TODO: Create a snackbar.
       console.log("Error", e);
@@ -36,6 +45,7 @@ export function queryExamples(examples, id) {
 // Reducer
 const initialState = {
   examples: {},
+  results: {},
 }
 export default function reducer(state = initialState, action) {
   switch (action.type) {
@@ -45,6 +55,14 @@ export default function reducer(state = initialState, action) {
         examples: {
           ...state.examples,
           [action.exp]: action.examples,
+        }
+      }
+    case EXAMPLES_RESULTS:
+      return {
+        ...state,
+        results: {
+          ...state.results,
+          [action.id]: action.results,
         }
       }
     default:
