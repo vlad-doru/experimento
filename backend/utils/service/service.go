@@ -30,6 +30,6 @@ func Start(s *grpc.Server, c *cli.Context) {
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
-	log.Printf("Started the microservice: %s\n", c.App.Name)
+	log.Printf("Started the microservice %s on port %d\n", c.App.Name, port)
 	s.Serve(lis)
 }
