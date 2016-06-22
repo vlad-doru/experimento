@@ -37,17 +37,26 @@ message Experiments {
 	map<string, Experiment> experiments = 1;
 }
 
+message StoreMessage {
+	string experiment_id = 1;
+	string entity_id = 2;
+	string group_id = 3;
+}
+
 message Response {
 	bool ok = 1;
 	string error = 2;
 }
 
-message Void {
-
-}
+message Void {}
 
 service Repository {
   rpc SaveExperiment (Experiment) returns(Response);
 	rpc DropExperiment (ExperimentInfo) returns(Response);
 	rpc GetExperiments (Void) returns (Experiments);
+}
+
+service Store {
+	rpc SetExperimentGroup (StoreMessage) returns(Response);
+	rpc GetExperimentGroup (StoreMessage) returns(StoreMessage);
 }
