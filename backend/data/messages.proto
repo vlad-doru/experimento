@@ -76,7 +76,7 @@ message QueryAll {
 
 message QueryExperiment {
 	string entity_id = 1;
-	ExperimentInfo info = 1;
+	ExperimentInfo info = 2;
 }
 
 message Variables {
