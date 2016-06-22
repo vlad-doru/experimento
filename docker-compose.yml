@@ -5,6 +5,7 @@ services:
     command: npm run deploy && npm start
     environment:
      - REPOSITORY_ADDR=repository:50051
+     - EXPERIMENTO_ADDR=experimento:50051
      - NODE_ENV=production
     ports:
      - "3000:3000"
