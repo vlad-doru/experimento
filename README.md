@@ -4,16 +4,16 @@ This projects aims at designing an experimentation service, which will then be u
 
 ## Concepts
 
-Experimento was designed to be highly extensible and customizable. We want to have everything decouples in such a way that will allow us to easily swap components. 
-We recommend that you follow a microservice oriented architecture while implementing the interfaces required.
+Experimento was designed to be highly extensible and customizable. We want to have everything decoupled in such a way that will allow us to easily swap components. This application follows an architecture based on microservices, while communicating through gRPC.
 
 ## Installation
 
-TODO: Describe the installation process.
+dockker-compose up
 
 ## Usage
 
-TODO: Write usage instructions with an example.
+We include a UI component that can be accessed at localhost:3000.
+The API for communication is described in backend/data/messages.proto
 
 ## Contributing
 
@@ -23,18 +23,9 @@ TODO: Write usage instructions with an example.
 4. Push to the branch: `git push origin my-new-feature`
 5. Submit a pull request :D
 
-## Tests
-
-TODO: Write about how to run this project's automated tests.
-
-*How do I maintain code quality?*
-
-We use CodeClimate in order to ensure that our project has great code quality. 
-If you want to run all the necessary checks locally you can run `codeclimate analyze` on your machine.
-
 ## Deploying
 
-TODO: Add how to deploy this project.
+We recomend that you deploy this service through Kubernetes. Controllers and services files will be coming soon.
 
 ## Credits
 
